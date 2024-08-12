@@ -5,29 +5,25 @@ import { MdChat, MdFacebook } from "react-icons/md"
 
 const Footer = () => {
   return (
-    <div className="w-8/12 mx-auto flex flex-row items-center justify-between py-4 text-white bg-red-700 p-4">
-        <div>
-          <div className="flex items-center gap-1">
-            <MdChat />
-            <Link className="text-lg" href='/'>Chatter</Link>
+    <div className="w-full mt-20">
+    <div className="w-10/12 mx-auto flex flex-col items-center justify-center p-4">
+               <div className="flex items-center gap-4">
+                  <MdFacebook className="text-2xl " />
+                  <FaInstagram className="text-2xl " />
+                  <FaTwitter className="text-2xl " />
+                  <FaLinkedin  className="text-2xl "/>
+              </div>
+         
+    
+            <div className="flex w-full mt-10 justify-center items-center py-2 border-b-[2px] border-gray-800 gap-6">
+             <Link className=" text-sm hover:font-bold hover:underline underline-offset-4 duration-300" href='/'>Home</Link>
+             <Link  className=" text-sm hover:font-bold hover:underline underline-offset-4 duration-300" href='/about'>About</Link>
+             <Link  className=" text-sm hover:font-bold hover:underline underline-offset-4 duration-300" href='/contact'>Contact</Link>
+             <Link  className=" text-sm hover:font-bold hover:underline underline-offset-4 duration-300" href='/user'>Login/Register</Link>
             </div>
-            <div className="flex flex-col gap-2">
-                <h2>Follow us on our socials</h2>
-                <div className="flex flex-col gap-1">
-                  <MdFacebook />
-                  <FaInstagram />
-                  <FaTwitter />
-                  <FaLinkedin />
-                </div>
-            </div>
-        </div>
-        <div className="flex flex-col gap-3">
-             <h2>Useful links</h2>
-             <Link className=" text-xs hover:font-bold hover:underline underline-offset-4 duration-300" href='/'>Home</Link>
-             <Link  className=" text-xs hover:font-bold hover:underline underline-offset-4 duration-300" href='/about'>About</Link>
-             <Link  className=" text-xs hover:font-bold hover:underline underline-offset-4 duration-300" href='/contact'>Contact</Link>
-             <Link  className=" text-xs hover:font-bold hover:underline underline-offset-4 duration-300" href='/user'>Login/Register</Link>
-        </div>
+            <div className="py-6">© 2024 Chatter. All rights reserved</div> 
+     </div>
+    
     </div>
   )
 }

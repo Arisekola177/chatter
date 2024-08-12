@@ -1,133 +1,176 @@
 'use client'
-import React, { useState } from 'react';
-import { blogData } from '@/constant/data';
-import Image from 'next/image';
-import { FaComment } from 'react-icons/fa';
-import { IoMdHeart } from 'react-icons/io';
+import React, { useRef, useState } from 'react';
+import { FaBlogger } from 'react-icons/fa';
+import { BiCategory } from "react-icons/bi";
 import { useRouter } from 'next/navigation';
-import 'froala-editor/js/plugins/image.min.js';
-import 'froala-editor/js/plugins/char_counter.min.js';
-import 'froala-editor/js/plugins/save.min.js';
-import 'froala-editor/js/plugins/markdown.min.js';
-import ReactPaginate from 'react-paginate';
-import FroalaEditor from 'react-froala-wysiwyg';
 import { z } from 'zod';
-import { useForm, SubmitHandler, FieldValues } from 'react-hook-form'
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import FroalaEditorComponent from 'react-froala-wysiwyg';
+import 'froala-editor/js/plugins.pkgd.min.js';
+import 'froala-editor/js/froala_editor.pkgd.min.js';
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from '@/app/firebaseConfig';
+import axios from 'axios';
+import LoadingButton from '../components/LoadingButton';
+
 
 const FormSchema = z.object({
-  post: z.string().nonempty('Description is required.'),
+  category: z.string().nonempty('Category is required.'),
+  title: z.string().nonempty('Title is required.')
 });
 
+
 const PostForm = () => {
-  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm({
+  const { register, handleSubmit,  reset, formState: { errors } } = useForm({
     resolver: zodResolver(FormSchema),
   });
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
   const [model, setModel] = useState(() => {
     return localStorage.getItem('savehtml') || '';
   });
 
-  const blogPerPage = 3;
+  const editorRef = useRef(null);
 
-  const offset = currentPage * blogPerPage;
-  const currentProducts = blogData.slice(offset, offset + blogPerPage);
-  const pageCount = Math.ceil(blogData.length / blogPerPage);
-
-  const handlePageChange = ({ selected }) => {
-    setCurrentPage(selected);
+  const handleModelChange = (model) => {
+    setModel(model);
   };
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    toast('Loading, please wait...');
+  const handleImageUpload = (files: FileList) => {
+    if (files.length) {
+      const file = files[0];
+      uploadFileToFirebase(file)
+        .then((url) => {
+          editorRef.current.editor.image.insert(url, null, null, editorRef.current.editor.image.get(), null);
+        })
+        .catch((error) => {
+          console.error("Image upload failed:", error);
+        });
+    }
+    return false;
+  };
+
+  const handleVideoUpload = (files: FileList) => {
+    if (files.length) {
+      const file = files[0];
+      uploadFileToFirebase(file)
+        .then((url) => {
+          editorRef.current.editor.video.insert(url, null, null, editorRef.current.editor.video.get(), null);
+        })
+        .catch((error) => {
+          console.error("Video upload failed:", error);
+        });
+    }
+    return false;
+  };
+
+  const uploadFileToFirebase = async (file: File) => {
+    return new Promise((resolve, reject) => {
+      const fileName = new Date().getTime() + '-' + file.name;
+      const storageRef = ref(storage, `uploads/${fileName}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log('Upload is ' + progress + '% done');
+        },
+        (error) => {
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+          });
+        }
+      );
+    });
+  };
+
+  const addBlog = async (data: any) => {
+    toast("Creating Post, please wait ....");
     setIsLoading(true);
-    console.log(data);
-    setIsLoading(false);
-    reset();
+    try {
+      const blogData = {
+        category: data.category,
+        title: data.title,
+        content: editorRef.current.editor.html.get(),
+      };
+      await axios.post('/api/blog', blogData);
+      setIsLoading(false);
+      toast.success('Blog created successfully!');
+      reset();
+      setModel('');
+      router.push('/');
+      router.refresh();
+    } catch (error) {
+      console.error('Something went wrong while saving blog to the database', error);
+      toast.error('Something went wrong while saving blog to the database');
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className='w-8/12 mx-auto gap-4 py-8 grid grid-cols-2'>
-      <div>
-        <h2 className='text-lg font-semibold text-center'>Previous Post</h2>
-        <p className='w-[90%] mx-auto py-2 border-b-[2px] border-red-700' />
-        {currentProducts.map((blog) => (
-          <div className='flex flex-col py-3 px-4' key={blog.id}>
-            <div className='grid grid-cols-2 gap-2'>
-              <Image src={blog.image} width={200} height={200} className='object-contain' alt={blog.title} />
-              <div>
-                <h3 className='text-sm font-medium text-purple-800'>{blog.category}</h3>
-                <h2 className='text-sm py-2 font-semibold text-red-700'>{blog.title}</h2>
+    <div className='w-10/12 mx-auto flex items-center justify-center gap-4 py-8'>
+      <div className='w-[600px] mx-auto'>
+        <h2 className='text-lg font-semibold text-orange-800 text-center'>Add New Post</h2>
+        <p className='w-full mx-auto py-2 mb-2 border-b-[2px] border-gray-700' />
+        <form className='flex flex-col py-4 gap-4' onSubmit={handleSubmit(addBlog)}>
+          <div className={`relative w-full ${errors.category ? 'mb-6' : 'mb-0'}`}>
+            <input
+              {...register("category")}
+              type="text"
+              placeholder="Blog Category"
+              className="rounded-md py-3 w-full px-10 outline-none placeholder:text-xs border-[1px] border-black focus:outline-slate-500"
+            />
+            <BiCategory className="absolute left-2 text-xs top-1/2 transform -translate-y-1/2 cursor-pointer" />
+            {errors.category && (
+              <div className="absolute left-0 top-full mt-1 text-red-500 text-xs">
+                {errors.category.message}
               </div>
-            </div>
-            <div className='flex flex-col py-4'>
-              <p className='text-xs text-justify'>{blog.description.substring(0, 300)}.....</p>
-              <div className='flex items-center mt-2 gap-2'>
-                <div className='text-sm font-semibold'>Posted: 3 days ago by Azeez</div>
-                <div className='font-semibold text-xs flex items-center gap-1 text-red-600'><FaComment /><span>3</span></div>
-                <div className='font-semibold text-xs flex items-center gap-1 text-red-600'><IoMdHeart /><span>3</span></div>
-                <div onClick={() => router.push(`/blog/${blog.id}`)}
-                  className='ml-4 border-b-[2px] border-red-700 cursor-pointer hover:font-semibold hover:text-red-900 text-sm text-red-700'>Read more</div>
-              </div>
-            </div>
-            <p className='w-[98%] col-span-2 mx-auto py-2 border-b-[2px] border-red-700' />
+            )}
           </div>
-        ))}
-      </div>
+          <div className={`relative w-full ${errors.title ? 'mb-6' : 'mb-0'}`}>
+            <input
+              {...register("title")}
+              type="text"
+              placeholder="Blog Title"
+              className="rounded-md py-3 w-full px-10 outline-none placeholder:text-xs border-[1px] border-black focus:outline-slate-500"
+            />
+            <FaBlogger className="absolute left-2 text-xs top-1/2 transform -translate-y-1/2 cursor-pointer" />
+            {errors.title && (
+              <div className="absolute left-0 top-full mt-1 text-red-500 text-xs">
+                {errors.title.message}
+              </div>
+            )}
+          </div>
 
-      <div>
-        <h2 className='text-lg font-semibold text-center'>Add new Post</h2>
-        <p className='w-[90%] mx-auto py-2 mb-2 border-b-[2px] border-red-700' />
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <FroalaEditor
+          <FroalaEditorComponent
+            ref={editorRef}
             tag='textarea'
-            model={model}
-            onModelChange={(e: string) => {
-              setModel(e);
-              setValue('post', e); // Update the form value with Froala's content
-            }}
             config={{
-              placeholderText: 'Start writing here...',
-              saveInterval: 2000,
-              pluginsEnabled: ['image', 'charCounter', 'save', 'markdown'],
-              toolbarButtons: ['bold', 'italic', 'underline', 'strikeThrough', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'indent', 'outdent', 'insertLink', 'insertImage', 'insertVideo', 'undo', 'redo', 'html'],
+              imageUpload: true,
+              videoUpload: true,
               events: {
+                'image.beforeUpload': (files: FileList) => handleImageUpload(files),
+                'video.beforeUpload': (files: FileList) => handleVideoUpload(files),
                 'save.before': function (html: string) {
                   localStorage.setItem('savehtml', html);
                 },
-                'initialized': function () {
-                  // Initialize the editor with clean content
-                  this.html.set('');
-                },
               },
             }}
+            onModelChange={handleModelChange}
           />
-          {errors.post && <p className='text-red-500'>{errors.post.message}</p>}
-          <button className='w-full mx-auto mt-2 bg-red-900 text-white rounded-b-md py-2'>
-            {isLoading ? 'Loading...' : 'Create Post'}
-          </button>
-        </form>
-      </div>
 
-      <div className="flex items-center justify-center my-8">
-        <ReactPaginate
-          previousLabel={'← Previous'}
-          nextLabel={'Next →'}
-          pageCount={pageCount}
-          onPageChange={handlePageChange}
-          containerClassName={'flex items-center p-0'}
-          pageClassName={'mx-1'}
-          pageLinkClassName={'p-2 border text-xs border-gray-300 rounded-lg cursor-pointer'}
-          previousClassName={'mx-1'}
-          previousLinkClassName={'p-2 border text-xs border-gray-300 rounded-lg cursor-pointer'}
-          nextClassName={'mx-1'}
-          nextLinkClassName={'p-2 border text-xs border-gray-300 rounded-lg cursor-pointer'}
-          activeClassName={'bg-red-500 text-xs text-white rounded-full'}
-        />
+         <LoadingButton isLoading={isLoading} onClick={handleSubmit(addBlog)} buttonText="Create Post" />
+
+        </form>
       </div>
     </div>
   );

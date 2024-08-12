@@ -5,9 +5,8 @@ import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"
-import 'react-quill/dist/quill.snow.css';
-import 'froala-editor/css/froala_style.min.css';
-import 'froala-editor/css/froala_editor.pkgd.min.css';
+import Head from "next/head";
+
 
 
 const inter = Inter({ subsets: ["latin"] });

@@ -1,18 +1,22 @@
-import { blogData } from "@/constant/data";
+
+
+
 import BlogDetails from "./BlogDetails";
+import { getUser } from "../../../../actions/getUser";
+import getBlogById from "../../../../actions/getBlogById";
 
-
-
-const BlogPage = ({ params }: { params: { blogid: string } }) => {
+const BlogPage = async ({ params }: { params: { blogid: string } }) => {
     const { blogid } = params;
-    const blog = blogData.find(blog => blog.id === blogid);
-
+    const currentUser = await getUser();
+    const blog = await getBlogById(blogid);
 
     return (
         <div>
-             <BlogDetails blog={blog} /> 
+            <BlogDetails blog={blog} currentUser={currentUser} />
         </div>
     );
 };
 
 export default BlogPage;
+
+

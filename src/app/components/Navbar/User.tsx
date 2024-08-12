@@ -1,63 +1,92 @@
-'use client'
-import { signOut } from "next-auth/react";
-import Link from "next/link";
-import { FaUser, FaUserCircle } from "react-icons/fa";
 
-interface Blog {
-    id: string;
-    userId: string;
-    title: string;
-    description: string;
-    category: string;
-    images: string;
-  }
-  
-  interface User {
-    createdAt: string | null;
-    updatedAt: string | null;
-    emailVerified: string | null;
-    blogs: Blog[];
-    email: string;
-    id: string;
-    image: string | null;
-    name: string;
-    hassPassword: string | null;
-  }
-  
-  interface ProfileProps {
-    currentUser: User | null;
-  }
 
-const User: React.FC<ProfileProps> = ({currentUser}) => {
-  
-  return (
-    <>
-    {
-      currentUser ? (
-     <div className="flex items-center gap-6 text-xs">
-           <div className="flex items-center gap-2 ">
-               <FaUserCircle />
-            <p>{currentUser.email}</p>
-           </div>
-        <Link className="hover:font-bold hover:underline-offset-8 hover:underline duration-300 hover:text-white"  href='/create-post'>Create Post</Link>
-        <div onClick={() => {
-                 signOut()
-               }} className="bg-red-900 text-white rounded-md py-2 px-4 hover:bg-red-950 hover:shadow-md">
-        <Link href='/'>Sign Out</Link>
-        </div>
-     </div> ) : (      <div className="flex items-center gap-2 text-xs">
-      <Link className="hover:font-bold hover:underline-offset-8 hover:underline duration-300 hover:text-white" href='/'>Home</Link>
-      <Link className="hover:font-bold hover:underline-offset-8 hover:underline duration-300 hover:text-white" href='/'>About</Link>
-      <Link className="hover:font-bold hover:underline-offset-8 hover:underline duration-300 hover:text-white" href='/'>Contact</Link>
-      <div className="bg-red-900 text-white rounded-md py-2 px-4 hover:bg-red-950 hover:shadow-md">
-      <Link href='/login'>Login/Register</Link>
-      </div>
-    </div>)
-    }
-     
-        
-    </>
-  )
+'use client';
+import React, { useState } from 'react';
+import { FaUserCircle } from 'react-icons/fa';
+import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai';
+import Link from 'next/link';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+
+interface User {
+  id: string;
+  name: string;
+  userId: string;
+  createdAt: string;
+  image: string;
 }
 
-export default User
+interface UserProps {
+  currentUser: User;
+}
+
+const User: React.FC<UserProps> = ({ currentUser }) => {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [opencaret, setOpenCaret] = useState(false);
+
+  const toggleMenu = () => {
+    setOpen(!open);
+  };
+
+  const toggleCaret = () => {
+    setOpenCaret(!opencaret);
+  };
+
+  const handleSignOut = async () => {
+    toggleMenu();
+    await signOut({ callbackUrl: '/' });
+    router.refresh();
+  };
+
+  return (
+    <div className="relative z-30">
+      <div
+        onClick={() => {
+          toggleMenu();
+          toggleCaret();
+        }}
+        className="flex gap-1 items-center xs:p-1 sm:p-2 border-[1px] border-orange-800 rounded-full cursor-pointer hover:shadow-md duration-300 transition text-orange-800"
+      >
+        {currentUser && currentUser.image ? (
+       <Image src={currentUser.image} alt={currentUser.name} width={20} height={20} className='rounded-full' />
+       ) : (
+         <FaUserCircle />
+        )}
+        
+        {opencaret ? <AiFillCaretUp /> : <AiFillCaretDown />}
+      </div>
+      {open && (
+        <div className="absolute rounded-md flex flex-col items-center bg-white shadow-md w-[170px] right-0 top-12 overflow-hidden text-sm text-black cursor-pointer">
+          {currentUser ? (
+            <div>
+              <div className="px-4 py-3">
+                <Link href="/create-post">Create Post</Link>
+              </div>
+              <div className="px-4 py-3">
+                <Link href="/recent-post">Your Previous Post</Link>
+              </div>
+              <hr />
+              <div onClick={handleSignOut} className="px-4 py-3 cursor-pointer">
+                LogOut
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="px-4 py-3">
+                <Link href="/login">Login</Link>
+              </div>
+              <div className="px-4 py-3">
+                <Link href="/register">Register</Link>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default User;
+

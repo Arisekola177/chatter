@@ -1,10 +1,10 @@
+
 import LoginForm from "./LoginForm"
-
-
-const page = () => {
+const page = async () => {
+ 
   return (
-    <div className="w-8/12 h-screen flex items-center justify-center mx-auto bg-slate-100">
-         <LoginForm />
+    <div className="w-8/12 h-screen flex items-center justify-center mx-auto ">
+         <LoginForm  />
     </div>
   )
 }

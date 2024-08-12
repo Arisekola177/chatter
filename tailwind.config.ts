@@ -18,6 +18,24 @@ const config = {
       },
     },
     extend: {
+      typography: (theme:any) => ({
+        DEFAULT: {
+          css: {
+            h1: {
+              color: theme('colors.gray.900'),
+              fontWeight: '300',
+            },
+            h2: {
+              color: theme('colors.gray.700'),
+              fontWeight: '200',
+            },
+            p: {
+              color: theme('colors.gray.600'),
+            },
+            // Add other element styles as needed
+          },
+        },
+      }),
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -34,7 +52,7 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"),  require('@tailwindcss/typography'),],
 } satisfies Config
 
 export default config

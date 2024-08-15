@@ -1,5 +1,4 @@
 
-
 'use client';
 import React, { useState } from 'react';
 import { FaUserAlt, FaUserCircle } from 'react-icons/fa';
@@ -8,20 +7,14 @@ import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { User } from '@/lib/type';
 
-interface User {
-  id: string;
-  name: string;
-  userId: string;
-  createdAt: string;
-  image: string;
-}
 
 interface UserProps {
-  currentUser: User;
+  currentUser: User | null;
 }
 
-const User: React.FC<UserProps> = ({ currentUser }) => {
+const UserProfile: React.FC<UserProps> = ({ currentUser }) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [opencaret, setOpenCaret] = useState(false);
@@ -51,7 +44,7 @@ const User: React.FC<UserProps> = ({ currentUser }) => {
         className="flex gap-1 items-center xs:p-1 sm:p-2 border-[1px] border-white rounded-full cursor-pointer hover:shadow-md duration-300 transition text-white"
       >
         {currentUser && currentUser.image ? (
-       <Image src={currentUser.image} alt={currentUser.name} width={20} height={20} className='rounded-full' />
+       <Image src={currentUser.image || ''} alt={currentUser.name || ''} width={20} height={20} className='rounded-full' />
        ) : (
          <FaUserCircle />
         )}
@@ -96,5 +89,5 @@ const User: React.FC<UserProps> = ({ currentUser }) => {
   );
 };
 
-export default User;
+export default UserProfile;
 

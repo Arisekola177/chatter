@@ -1,36 +1,19 @@
+'use client';
 
-'use client'
-import Review from "./Review";
+import ReviewComponent from "./Review"; 
 import DOMPurify from 'dompurify';
 import { useEffect } from "react";
 import Addreviews from './Addreviews';
 import Trending from "@/app/components/Trending";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
-
-interface Blog {
-    id: string;
-    title: string;
-    content: string;
-    category: string;
-    image: string;
-    reviews: [];
-    createdAt: string;
-    author: string;
-}
-
-interface User {
-    id: string;
-    name: string;
-    image: string;
-    userId: string;
-    createdAt: string;
-}
+import { Blog, User } from '@/lib/type'; 
 
 interface BlogDetailsProps {
     blog: Blog;
-    currentUser: User | null;
+    currentUser: User;
 }
 
+// Extract the first image from the blog content
 const extractFirstImage = (content: string | undefined) => {
     if (!content) return { src: null, content: '', caption: '' };
 
@@ -46,8 +29,12 @@ const extractFirstImage = (content: string | undefined) => {
     return { src: null, content: div.innerHTML, caption: '' };
 };
 
-
+// Main component
 const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, currentUser }) => {
+    if (!blog) {
+        return <div>Blog not found</div>;
+    }
+
     const { src: firstImage, content: sanitizedContent, caption: firstImageCaption } = extractFirstImage(blog.content);
 
     useEffect(() => {
@@ -75,17 +62,15 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, currentUser }) => {
 
     return (
         <div className='w-full overflow-hidden'>
-          
             <div className="xl:w-10/12 xs:w-11/12 mx-auto grid grid-cols-1 md:grid-cols-4 xs:gap-2 md:gap-4 xs:p-2 md:p-4">
                 <div className="flex flex-col gap-2 xs:col-span-1 md:col-span-3">
                     <div className="py-4">
                         <div className="w-full">
                             <div className="bg-orange-600 w-44">
-                            <h3 className='md:text-xl xs:text-sm font-bold text-white px-2 py-1 font-mono'>{blog.category}</h3>
+                                <h3 className='md:text-xl xs:text-sm font-bold text-white px-2 py-1 font-mono'>{blog.category}</h3>
                             </div>
-                        
                         </div>
-                        
+
                         <h1 className='md:text-4xl xs:text-xl py-2 font-semibold text-white'>{blog.title}</h1>
                         <div className="flex items-center">
                             <div className="flex flex-col gap-1">
@@ -115,7 +100,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, currentUser }) => {
 
                     <div className="flex xs:w-full md:w-[500px] flex-col gap-2">
                         <h2 className="py-2 font-semibold text-lg text-white">Reviews</h2>
-                        <Review blog={blog} />
+                        <ReviewComponent blog={blog} />
                     </div>
                 </div>
 

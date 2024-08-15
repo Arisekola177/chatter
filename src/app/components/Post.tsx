@@ -12,36 +12,12 @@ import { toast } from 'react-toastify';
 import PostForm from './PostForm';
 import Profile from './Profile';
 import axios from 'axios';
+import {User, Blog} from '@/lib/type'
 
-interface Blog {
-  id: string;
-  title: string;
-  category: string;
-  content: string;
-  reviews: [];
-  createdAt: string;
-  image?: string;
-  author: string;
-  likes: Like[];
-}
-interface Like {
-  id: string;
-  blogId: string;
-  userId: string;
-}
-
-interface User {
-  id: string;       
-  name: string;
-  email: string;
-  image: string;
-  reviews: [];
-  blogs: [];
-}
 
 interface BlogProps {
   blogData: Blog[];
-  currentUser: User;
+  currentUser: User ;
 }
 
 const Post: React.FC<BlogProps> = ({ blogData: initialBlogData, currentUser }) => {

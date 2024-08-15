@@ -1,27 +1,9 @@
-
-'use client'
-
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useForm, SubmitHandler, FieldValues } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-
-interface User {
-    id: string;
-    name: string;
-    userId: string;
-    createdAt: string;
-    image: string;
-}
-
-interface Blog {
-    id: string;
-    title: string;
-    category: string;
-    content: string;
-    reviews: [];
-}
+import { Blog, User } from '@/lib/type'; 
 
 interface ReviewProps {
     currentUser: User | null;
@@ -81,5 +63,3 @@ const Addreviews: React.FC<ReviewProps> = ({ blog, currentUser }) => {
 };
 
 export default Addreviews;
-
-

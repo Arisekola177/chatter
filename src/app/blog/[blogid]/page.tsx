@@ -1,14 +1,20 @@
 
 
-
 import BlogDetails from "./BlogDetails";
 import { getUser } from "../../../../actions/getUser";
 import getBlogById from "../../../../actions/getBlogById";
+import { notFound } from "next/navigation";
 
 const BlogPage = async ({ params }: { params: { blogid: string } }) => {
     const { blogid } = params;
     const currentUser = await getUser();
     const blog = await getBlogById(blogid);
+
+    // Check if the blog or currentUser exists
+    if (!blog || !currentUser) {
+        notFound();
+        return null; 
+    }
 
     return (
         <div>

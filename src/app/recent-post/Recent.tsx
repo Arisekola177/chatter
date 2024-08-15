@@ -1,28 +1,20 @@
 import Post from "./Post"
+import { Blog, User } from "@/lib/type";
 
-interface Blog {
-  id: string;
-  title: string;
-  category: string;
-  content: string;
-  reviews: [];
-  createdAt: string;
-  image?: string;
-  author: string;
-}
   
   interface BlogProps {
     blog: Blog[];
+    currentUser: User | null;
   }
 
 
-const Recent: React.FC<BlogProps> = ({blog}) => {
+const Recent: React.FC<BlogProps> = ({blog, currentUser}) => {
 
   return (
     <div className='md:w-9/12 xs:w-11/12 mx-auto '>
     <h2 className='text-lg font-semibold text-white text-center'>Recent Post</h2>
     <p className='w-full mx-auto py-2 mb-2 border-b-[2px] border-gray-700' />
-    <Post blog={blog} />
+    <Post blog={blog} currentUser={currentUser} />
   </div>
   )
 }

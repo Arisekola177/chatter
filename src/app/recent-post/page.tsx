@@ -5,11 +5,11 @@ import Recent from "./Recent"
 
 const page = async () => {
     const currentUser = await getUser()
-    const blog = await getBlogsByUserId(currentUser?.id)
+    const blog = await getBlogsByUserId(currentUser!.id)
   
   return (
     <div className="md:w-10/12 xs:w-11/12 mx-auto py-8">
-       <Recent blog={blog} />
+       <Recent blog={blog} currentUser={currentUser} />
     </div>
   )
 }

@@ -8,17 +8,13 @@ import { formatDistanceToNow } from "date-fns";
 import LoadingButton from "../components/LoadingButton";
 import Image from "next/image";
 import icon from '../../../public/images/imageicon.png';
+import { User } from '@/lib/type'; 
 
-interface User {
-    id: string;
-    name: string;
-    image: string;
-    createdAt: string;
-    email: string;
-}
 interface UserProps {
     currentUser: User | null;
- }
+}
+
+ 
 const EditProfile: React.FC<UserProps> = ({currentUser}) => {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState(currentUser?.image || '');

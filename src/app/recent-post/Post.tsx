@@ -13,37 +13,12 @@ import { deleteObject, ref } from 'firebase/storage';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import Image from 'next/image';
+import {User, Blog} from '@/lib/type'
 
-interface Blog {
-  id: string;
-  title: string;
-  category: string;
-  content: string;
-  reviews: [];
-  createdAt: string;
-  image?: string;
-  author: string;
-  likes: Like[];
-}
-
-interface Like {
-  id: string;
-  blogId: string;
-  userId: string;
-}
-
-interface User {
-  id: string;       
-  name: string;
-  email: string;
-  image: string;
-  reviews: [];
-  blogs: [];
-}
 
 interface BlogProps {
+  currentUser: User | null;
   blog: Blog[];
-  currentUser: User;
 }
 
 const Post: React.FC<BlogProps> = ({ blog, currentUser }) => {
@@ -155,9 +130,11 @@ const Post: React.FC<BlogProps> = ({ blog, currentUser }) => {
                   Read more
                 </div>
                 <div className='flex justify-end items-center gap-2 py-2'>
-                  <div onClick={() => handleDelete(blog.id, [{ image: blog.image }])} className='bg-red-700 text-white rounded-md py-1 cursor-pointer text-xs px-4'>
-                    Delete
-                  </div>
+                <div onClick={() => handleDelete(blog.id, [{ image: blog.images?.[0] || 'https://randomuser.me/api/portraits/men/1.jpg' }])} 
+                      className='bg-red-700 text-white rounded-md py-1 cursor-pointer text-xs px-4'>
+                      Delete
+                    </div>
+
                 </div>
               </div>
             </div>

@@ -14,7 +14,10 @@ export default async function getBlogById(blogId: string) {
                     orderBy: {
                         createdAt: 'desc'
                     }
-                }
+                    
+                },
+                likes: true, 
+                
             }
         });
 

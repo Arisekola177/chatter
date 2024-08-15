@@ -16,7 +16,8 @@ export interface Like {
     id: string;
     name: string | null;
     createdAt: Date;
-    userId: string | null; 
+    userId: string | null;
+    blogId: string;
 }
 
 export interface Blog {
@@ -24,13 +25,16 @@ export interface Blog {
     title: string;
     content: string;
     category: string;
-    images?: string[]; 
+    images?: string[];
     reviews: Review[];
-    likes: Like[];  // Include the like array here
-    createdAt: Date; 
-    updatedAt: Date;  
+    createdAt: Date;
+    updatedAt: Date;
     author: string;
+    likes: Like[];  
 }
+
+
+
 
 export interface User {
     id: string;

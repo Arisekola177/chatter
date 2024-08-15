@@ -41,12 +41,7 @@ export async function getUser() {
     }
 }
 
-
-
-
-
-
-       
+      
 
 
 

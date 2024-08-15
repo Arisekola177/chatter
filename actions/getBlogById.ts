@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma';
 
 
-export default async function getProductById(blogId){
+export default async function getProductById(blogId: string){
     try {
             const blog = await prisma.blog.findUnique({
                 where: {

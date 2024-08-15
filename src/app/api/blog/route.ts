@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         content,
         title,
         category,
-        image: imageUrl,
+        images: imageUrl,
         userId: currentUser.id,
         author: currentUser.name,
       }

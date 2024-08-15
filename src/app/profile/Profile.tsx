@@ -1,3 +1,4 @@
+'use client'
 import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
 import Post from '../recent-post/Post';

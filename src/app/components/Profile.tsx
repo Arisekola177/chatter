@@ -1,3 +1,4 @@
+'use client'
 import Link from "next/link";
 import { FaBell, FaUserAlt } from "react-icons/fa";
 import { MdHome, MdSearch, MdMessage, MdPostAdd } from "react-icons/md";

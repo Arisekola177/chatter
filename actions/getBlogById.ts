@@ -24,7 +24,7 @@ export default async function getBlogById(blogId: string){
             return blog;
 
         
-    } catch (error) {
-        throw new Error(error)
+    } catch (error : any) {
+        throw new Error(error instanceof Error ? error.message : String(error));
     }
 }

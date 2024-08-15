@@ -1,10 +1,14 @@
-import prisma from '@/lib/prisma'
+import prisma from '@/lib/prisma';
 
+interface BlogParams {
+    category?: string;
+    searchTerm?: string;
+  }
 
-export default async function getBlog(params = {}) { 
+export default async function getBlog(params: BlogParams = {}) { 
     try {
         const { category, searchTerm } = params;
-        let searchString = searchTerm || '';
+        const searchString = searchTerm || '';
 
         let query = {};
 
@@ -20,7 +24,9 @@ export default async function getBlog(params = {}) {
                         title: {
                             contains: searchString,
                             mode: 'insensitive'
-                        },
+                        }
+                    },
+                    {
                         category: {
                             contains: searchString,
                             mode: 'insensitive'
@@ -31,17 +37,35 @@ export default async function getBlog(params = {}) {
             include: {
                 reviews: {
                     include: {
-                        user: true,
+                        user: true, 
                     },
                     orderBy: {
                         createdAt: 'desc'
                     }
-                }
+                },
+                likes: true, 
             }
         });
-        return blogs;
-    } catch (error:any) {
+
+        return blogs.map(blog => ({
+            ...blog,
+            reviews: blog.reviews.map(review => ({
+                ...review,
+                user: review.user || null 
+            })),
+            likes: blog.likes.map(like => ({
+                ...like,
+                user: like.user || null 
+            }))
+        }));
+    } catch (error: any) {
         throw new Error(error.message);
     }
 }
+
+
+
+
+              
+          
 

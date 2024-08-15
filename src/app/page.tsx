@@ -2,21 +2,35 @@ export const revalidate = 0;
 import Banner from "./components/Banner";
 import Post from "./components/Post";
 import getBlogs from '../../actions/getBlogs'
-import Nulldata from "./components/Nulldata";
 import { getUser } from "../../actions/getUser";
+import LoginForm from "./login/LoginForm";
 
+interface SearchParams {
+  category?: string;
+  searchTerm?: string;
+}
 
-export default async function Home({ searchParams }) {
+interface HomeProps {
+  searchParams: SearchParams;
+}
+
+export default async function Home({searchParams}: HomeProps ) {
   const blogData = await getBlogs(searchParams);
   const currentUser = await getUser()
    
-  if (blogData.length === 0) {
-    return <Nulldata title="Oops! No Blog found. " />;
-  }
+  if (!currentUser) {
+    return(
+    <div className="flex items-center justify-center h-screen">
+     <LoginForm/>
+     </div> 
+  )}
+ 
   return (
-    <main >
-       <Banner />
+    <main className="overflow-hidden" >
+       {/* <Banner /> */}
        <Post blogData={blogData} currentUser={currentUser} />
+        
     </main>
   );
 }
+

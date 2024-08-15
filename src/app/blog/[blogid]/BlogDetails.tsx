@@ -2,7 +2,6 @@
 'use client'
 import Review from "./Review";
 import DOMPurify from 'dompurify';
-import Banner from "@/app/components/Banner";
 import { useEffect } from "react";
 import Addreviews from './Addreviews';
 import Trending from "@/app/components/Trending";
@@ -14,7 +13,7 @@ interface Blog {
     content: string;
     category: string;
     image: string;
-    reviews: any[];
+    reviews: [];
     createdAt: string;
     author: string;
 }
@@ -32,16 +31,21 @@ interface BlogDetailsProps {
     currentUser: User | null;
 }
 
-const extractFirstImage = (content: string) => {
+const extractFirstImage = (content: string | undefined) => {
+    if (!content) return { src: null, content: '', caption: '' };
+
     const div = document.createElement('div');
     div.innerHTML = content;
+
     const img = div.querySelector('img');
     if (img) {
         img.remove();
         return { src: img.src, content: div.innerHTML, caption: img.alt || img.title || '' };
     }
-    return { src: null, content, caption: '' };
+
+    return { src: null, content: div.innerHTML, caption: '' };
 };
+
 
 const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, currentUser }) => {
     const { src: firstImage, content: sanitizedContent, caption: firstImageCaption } = extractFirstImage(blog.content);
@@ -70,16 +74,22 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, currentUser }) => {
     }, [sanitizedContent]);
 
     return (
-        <div className='w-full'>
-            <Banner />
-            <div className="w-10/12 mx-auto grid grid-cols-4 gap-4 p-4">
-                <div className="flex flex-col gap-2 col-span-3">
+        <div className='w-full overflow-hidden'>
+          
+            <div className="xl:w-10/12 xs:w-11/12 mx-auto grid grid-cols-1 md:grid-cols-4 xs:gap-2 md:gap-4 xs:p-2 md:p-4">
+                <div className="flex flex-col gap-2 xs:col-span-1 md:col-span-3">
                     <div className="py-4">
-                        <h3 className='text-xl font-bold bg-orange-600 text-white px-2 py-1 font-mono w-[100px]'>{blog.category}</h3>
-                        <h1 className='text-4xl py-2 font-semibold text-orange-700'>{blog.title}</h1>
+                        <div className="w-full">
+                            <div className="bg-orange-600 w-44">
+                            <h3 className='md:text-xl xs:text-sm font-bold text-white px-2 py-1 font-mono'>{blog.category}</h3>
+                            </div>
+                        
+                        </div>
+                        
+                        <h1 className='md:text-4xl xs:text-xl py-2 font-semibold text-white'>{blog.title}</h1>
                         <div className="flex items-center">
                             <div className="flex flex-col gap-1">
-                                <h2 className='text-sm font-semibold'>Published: {formatDistanceToNow(new Date(blog.createdAt), { addSuffix: true })} by {blog.author}</h2>
+                                <h2 className='text-sm text-white font-semibold'>Posted: {formatDistanceToNow(new Date(blog.createdAt), { addSuffix: true })} by {blog.author}</h2>
                             </div>
                         </div>
                     </div>
@@ -93,23 +103,23 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, currentUser }) => {
                         </figure>
                     )}
 
-                    <div id="remaining-content" className='prose prose-sm max-w-none text-justify'
+                    <div className='prose prose-sm max-w-none text-justify'
+                        style={{ color: 'white' }}
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(sanitizedContent) }}>
                     </div>
 
-                    <div className="flex w-[500px] mt-16 flex-col gap-2">
-                        <h2 className="text-lg font-semibold text-orange-800">Add a Review</h2>
+                    <div className="flex xs:w-full md:w-[500px] mt-16 flex-col gap-2">
+                        <h2 className="text-lg font-semibold text-white">Add a Review</h2>
                         <Addreviews blog={blog} currentUser={currentUser} />
                     </div>
 
-                    <div className="flex w-[500px] flex-col gap-2">
-                        <h2 className="py-2 font-semibold text-lg text-orange-800">Reviews</h2>
+                    <div className="flex xs:w-full md:w-[500px] flex-col gap-2">
+                        <h2 className="py-2 font-semibold text-lg text-white">Reviews</h2>
                         <Review blog={blog} />
                     </div>
                 </div>
 
-                <div className='col-span-1'>
-                    <h1 className='text-3xl text-orange-700 font-semibold text-start mb-10'>Trending</h1>
+                <div className='hidden md:block col-span-1'>
                     <Trending />
                 </div>
             </div>
@@ -118,4 +128,3 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, currentUser }) => {
 };
 
 export default BlogDetails;
-

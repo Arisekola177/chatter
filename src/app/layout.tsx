@@ -5,9 +5,9 @@ import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"
-import Head from "next/head";
-
-
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/css/themes/gray.min.css'; 
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,9 +27,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col bg-slate-800 min-h-screen">
         <Navbar />
-        <div className="flex-grow">
+        <div className="flex-grow ">
         {children}
         <ToastContainer />
         </div>

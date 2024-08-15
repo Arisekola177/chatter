@@ -18,6 +18,16 @@ const config = {
       },
     },
     extend: {
+      screens: {
+        xs: "240px",
+        sm: "320px",
+        sml: "480px",
+        md: "768px",
+        lg: "960px",
+        lgl: "1024px",
+        xl: "1280px",
+        xxl: "1320px",
+      },
       typography: (theme:any) => ({
         DEFAULT: {
           css: {
@@ -29,9 +39,7 @@ const config = {
               color: theme('colors.gray.700'),
               fontWeight: '200',
             },
-            p: {
-              color: theme('colors.gray.600'),
-            },
+          
             // Add other element styles as needed
           },
         },

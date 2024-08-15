@@ -13,8 +13,7 @@ export async function POST(req:Request) {
         }
 
         const body = await req.json();
-        console.log('Received body:', body);
-
+      
         const { comment,  blogId } = body;
 
         if (!blogId || !comment  === undefined) {
@@ -40,10 +39,10 @@ export async function POST(req:Request) {
                 comment,
                 blogId: blog.id,
                 userId: currentUser.id,
+
             },
         });
 
-        console.log('Review created:', review);
         return NextResponse.json(review);
 
     } catch (error) {

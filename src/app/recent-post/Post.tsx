@@ -1,8 +1,9 @@
-'use client'
+
+'use client';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import {  FaRegComment } from 'react-icons/fa';
-import { SlLike } from "react-icons/sl"
+import { FaRegComment } from 'react-icons/fa';
+import { SlLike } from "react-icons/sl";
 import ReactPaginate from 'react-paginate';
 import DOMPurify from 'dompurify';
 import Nulldata from '../components/Nulldata';
@@ -19,17 +20,30 @@ interface Blog {
   category: string;
   content: string;
   reviews: [];
-}
-interface User {
-  id: string;
-  name: string;
-  userId: string;
   createdAt: string;
+  image?: string;
+  author: string;
+  likes: Like[];
+}
+
+interface Like {
+  id: string;
+  blogId: string;
+  userId: string;
+}
+
+interface User {
+  id: string;       
+  name: string;
+  email: string;
+  image: string;
+  reviews: [];
+  blogs: [];
 }
 
 interface BlogProps {
   blog: Blog[];
-  currentUser: User[];
+  currentUser: User;
 }
 
 const Post: React.FC<BlogProps> = ({ blog, currentUser }) => {
@@ -37,9 +51,12 @@ const Post: React.FC<BlogProps> = ({ blog, currentUser }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const productsPerPage = 3;
 
+  // Sort blogs by createdAt in descending order
+  const sortedBlogs = blog.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
   const offset = currentPage * productsPerPage;
-  const currentBlog = blog.slice(offset, offset + productsPerPage);
-  const pageCount = Math.ceil(blog.length / productsPerPage);
+  const currentBlog = sortedBlogs.slice(offset, offset + productsPerPage);
+  const pageCount = Math.ceil(sortedBlogs.length / productsPerPage);
 
   const handlePageChange = ({ selected }: { selected: number }) => {
     setCurrentPage(selected);
@@ -96,10 +113,8 @@ const Post: React.FC<BlogProps> = ({ blog, currentUser }) => {
     }
   }, [router]);
 
-  
-
   if (currentBlog.length === 0) {
-    return <Nulldata title="Oops! No Blog Yet. " />;
+    return <Nulldata title="Oops! No Blog Yet." />;
   }
 
   return (
@@ -110,43 +125,46 @@ const Post: React.FC<BlogProps> = ({ blog, currentUser }) => {
         const firstImage = extractFirstImage(blog.content);
 
         return (
-          <div className='w-9/12 mx-auto gap-4 px-3 grid grid-cols-2 py-3' key={blog.id}>
-             <div className='w-[400px] h-[300px] rounded-md col-span-1'>
-                {firstImage && (
-                  <Image 
-                    src={firstImage} 
-                    width={400} 
-                    height={300} 
-                    alt={blog.title} 
-                    className='object-cover w-full h-full' 
-                  />
-                )}
-              </div>
-            <div className='flex flex-col col-span-1 gap-4'>
+          <div className='w-full md:gap-4 xs:gap-2 md:px-3 xs:px-1 grid xs:grid-cols-1 md:grid-cols-2 xxl:grid-cols-3 border-b-[1px] border-slate-500 py-3' key={blog.id}>
+            <div className='xl:w-[300px] md:w-[200px] md:h-[200px] lg:w-[230px]  xs:w-full xl:h-[200px] rounded-md col-span-1'>
+              {firstImage && (
+                <Image 
+                  src={firstImage} 
+                  width={400} 
+                  height={300} 
+                  alt={blog.title} 
+                  className='object-cover w-full h-full' 
+                />
+              )}
+            </div>
+            <div className='flex flex-col md:col-span-1 xxl:col-span-2 gap-2'>
               <h3 className='text-sm font-medium text-purple-800'>{blog.category}</h3>
-              <h2 className='text-xl font-semibold text-red-700'>{blog.title}</h2>
-              <p className='prose prose-sm max-w-none text-justify'
+              <h2 className='xl:text-xl xs:text-sm  md:text-xs font-semibold text-white'>{blog.title}</h2>
+              <p className='prose prose-sm xs:text-xs md:text-[8px] lg:text-sm max-w-none text-white'
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(truncatedContent) }}>
               </p>
-              <div className='flex items-center gap-2'>
- 
- <div className='font-semibold text-xs flex items-center gap-1 text-red-600'><FaRegComment /><span>3</span></div>
- <div className='font-semibold text-xs flex items-center gap-1 text-red-600'><SlLike /><span>3</span></div>
- <div onClick={() => router.push(`/blog/${blog.id}`)}
-   className='ml-4 border-b-[2px] border-red-700 cursor-pointer hover:font-semibold hover:text-red-900 text-sm text-red-700'>Read more</div>
-</div>
-<div className='flex items-center gap-2 py-2'>
- <div onClick={() => handleDelete(blog.id, [{ image: blog.image }])} className='bg-red-700 text-white rounded-md py-1 cursor-pointer text-xs  px-4'>
-   Delete
- </div>
-</div>
+              <div className='flex items-center xs:gap-2 md:gap-4'>
+                <div className='font-semibold text-xs flex items-center gap-1 text-white'>
+                  <FaRegComment /><span>{blog.reviews ? blog.reviews.length : 0}</span>
+                </div>
+                <div className='font-semibold text-xs flex items-center gap-1 text-white'>
+                  <SlLike /><span>{blog.likes ? blog.likes.length : 0}</span>
+                </div>
+                <div onClick={() => router.push(`/blog/${blog.id}`)}
+                  className=' border-b-[2px] border-red-700 cursor-pointer hover:font-semibold hover:text-red-900 md:text-[8px] lg:text-sm text-red-700'>
+                  Read more
+                </div>
+                <div className='flex justify-end items-center gap-2 py-2'>
+                  <div onClick={() => handleDelete(blog.id, [{ image: blog.image }])} className='bg-red-700 text-white rounded-md py-1 cursor-pointer text-xs px-4'>
+                    Delete
+                  </div>
+                </div>
+              </div>
             </div>
-
-          
           </div>
         );
       })}
-      <div className="flex items-center justify-center my-8">
+      <div className="flex items-center justify-center gap-4 py-16 mt-10">
         <ReactPaginate
           previousLabel={'← Previous'}
           nextLabel={'Next →'}
@@ -154,12 +172,12 @@ const Post: React.FC<BlogProps> = ({ blog, currentUser }) => {
           onPageChange={handlePageChange}
           containerClassName={'flex items-center p-0'}
           pageClassName={'mx-1'}
-          pageLinkClassName={'p-2 border text-xs border-gray-300 rounded-lg cursor-pointer'}
+          pageLinkClassName={'p-2 border text-xs border-white rounded-lg text-white hover:text-black cursor-pointer hover:bg-white'}
           previousClassName={'mx-1'}
-          previousLinkClassName={'p-2 border text-xs border-gray-300 rounded-lg cursor-pointer'}
+          previousLinkClassName={'p-2 border text-xs border-white text-white hover:text-black rounded-lg hover:bg-white cursor-pointer'}
           nextClassName={'mx-1'}
-          nextLinkClassName={'p-2 border text-xs border-gray-300 rounded-lg cursor-pointer'}
-          activeClassName={'bg-red-500 text-xs text-white rounded-full'}
+          nextLinkClassName={'p-2 border text-xs border-white text-white hover:text-black rounded-lg cursor-pointer hover:bg-white '}
+          activeClassName={'bg-slate-800 text-xs rounded-full text-white hover:text-black'}
         />
       </div>
     </>

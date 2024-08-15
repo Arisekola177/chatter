@@ -10,11 +10,14 @@ export async function POST(req:Request) {
 
   const hassPassword = await bcrypt.hash(password, 10);
 
+  const defaultImageUrl = "https://randomuser.me/api/portraits/men/1.jpg";
+
   const user = await prisma.user.create({
     data: {
       name,
       email,
       hassPassword,
+      image: defaultImageUrl,
     },
   });
 

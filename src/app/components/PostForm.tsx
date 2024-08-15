@@ -1,5 +1,8 @@
-'use client'
-import React, { useRef, useState } from 'react';
+
+'use client';
+
+import React, { useRef, useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { FaBlogger } from 'react-icons/fa';
 import { BiCategory } from "react-icons/bi";
 import { useRouter } from 'next/navigation';
@@ -8,36 +11,39 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import FroalaEditorComponent from 'react-froala-wysiwyg';
-import 'froala-editor/js/plugins.pkgd.min.js';
-import 'froala-editor/js/froala_editor.pkgd.min.js';
-import 'froala-editor/css/froala_editor.pkgd.min.css';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from '@/app/firebaseConfig';
 import axios from 'axios';
-import LoadingButton from '../components/LoadingButton';
+import LoadingButton from './LoadingButton';
 
+
+const FroalaEditorComponent = dynamic(() => import('react-froala-wysiwyg'), { ssr: false });
 
 const FormSchema = z.object({
   category: z.string().nonempty('Category is required.'),
-  title: z.string().nonempty('Title is required.')
+  title: z.string().nonempty('Title is required.'),
 });
 
-
 const PostForm = () => {
-  const { register, handleSubmit,  reset, formState: { errors } } = useForm({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: zodResolver(FormSchema),
   });
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [model, setModel] = useState(() => {
-    return localStorage.getItem('savehtml') || '';
-  });
-
   const editorRef = useRef(null);
 
-  const handleModelChange = (model) => {
+
+  const [model, setModel] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedModel = localStorage.getItem('savehtml') || '';
+      setModel(savedModel);
+    }
+  }, []);
+
+  const handleModelChange = (model: any) => {
     setModel(model);
   };
 
@@ -46,7 +52,7 @@ const PostForm = () => {
       const file = files[0];
       uploadFileToFirebase(file)
         .then((url) => {
-          editorRef.current.editor.image.insert(url, null, null, editorRef.current.editor.image.get(), null);
+          editorRef.current?.editor?.image.insert(url, null, null, editorRef.current?.editor?.image.get(), null);
         })
         .catch((error) => {
           console.error("Image upload failed:", error);
@@ -60,7 +66,7 @@ const PostForm = () => {
       const file = files[0];
       uploadFileToFirebase(file)
         .then((url) => {
-          editorRef.current.editor.video.insert(url, null, null, editorRef.current.editor.video.get(), null);
+          editorRef.current?.editor?.video.insert(url, null, null, editorRef.current.editor.video.get(), null);
         })
         .catch((error) => {
           console.error("Video upload failed:", error);
@@ -100,7 +106,7 @@ const PostForm = () => {
       const blogData = {
         category: data.category,
         title: data.title,
-        content: editorRef.current.editor.html.get(),
+        content: editorRef.current?.editor.html.get(),
       };
       await axios.post('/api/blog', blogData);
       setIsLoading(false);
@@ -117,38 +123,44 @@ const PostForm = () => {
   };
 
   return (
-    <div className='w-10/12 mx-auto flex items-center justify-center gap-4 py-8'>
-      <div className='w-[600px] mx-auto'>
-        <h2 className='text-lg font-semibold text-orange-800 text-center'>Add New Post</h2>
-        <p className='w-full mx-auto py-2 mb-2 border-b-[2px] border-gray-700' />
+    <div className='flex items-center justify-center gap-4'>
+      <div className=''>
         <form className='flex flex-col py-4 gap-4' onSubmit={handleSubmit(addBlog)}>
-          <div className={`relative w-full ${errors.category ? 'mb-6' : 'mb-0'}`}>
-            <input
-              {...register("category")}
-              type="text"
-              placeholder="Blog Category"
-              className="rounded-md py-3 w-full px-10 outline-none placeholder:text-xs border-[1px] border-black focus:outline-slate-500"
-            />
-            <BiCategory className="absolute left-2 text-xs top-1/2 transform -translate-y-1/2 cursor-pointer" />
-            {errors.category && (
-              <div className="absolute left-0 top-full mt-1 text-red-500 text-xs">
-                {errors.category.message}
-              </div>
-            )}
-          </div>
-          <div className={`relative w-full ${errors.title ? 'mb-6' : 'mb-0'}`}>
-            <input
-              {...register("title")}
-              type="text"
-              placeholder="Blog Title"
-              className="rounded-md py-3 w-full px-10 outline-none placeholder:text-xs border-[1px] border-black focus:outline-slate-500"
-            />
-            <FaBlogger className="absolute left-2 text-xs top-1/2 transform -translate-y-1/2 cursor-pointer" />
-            {errors.title && (
-              <div className="absolute left-0 top-full mt-1 text-red-500 text-xs">
-                {errors.title.message}
-              </div>
-            )}
+          <div className='grid xs:grid-cols-1 md:grid-cols-2 gap-2'>
+            <div className={`relative w-full ${errors?.category ? 'mb-6' : 'mb-0'}`}>
+              <select {...register("category")}
+                className="rounded-md py-3 w-full px-10 outline-none border-[1px] border-black focus:outline-slate-500">
+                <option value="">Select a category</option>
+                <option value="Technology">Technology</option>
+                <option value="Lifestyle">Lifestyle</option>
+                <option value="Education">Education</option>
+                <option value="Fashion">Fashion</option>
+                <option value="Sport">Sport</option>
+                <option value="Culture">Culture</option>
+                <option value="Travel">Travel</option>
+                <option value="Entertainment">Entertainment</option>
+              </select>
+              <BiCategory className="absolute left-2 text-xs top-1/2 transform -translate-y-1/2 cursor-pointer" />
+              {errors.category && (
+                <div className="absolute left-0 top-full mt-1 text-red-500 text-xs">
+                  {errors.category.message?.toString()}
+                </div>
+              )}
+            </div>
+            <div className={`relative w-full ${errors?.title ? 'mb-6' : 'mb-0'}`}>
+              <input
+                {...register("title")}
+                type="text"
+                placeholder="Blog Title"
+                className="rounded-md py-3 w-full px-10 outline-none placeholder:text-xs border-[1px] border-black focus:outline-slate-500"
+              />
+              <FaBlogger className="absolute left-2 text-xs top-1/2 transform -translate-y-1/2 cursor-pointer" />
+              {errors.title && (
+                <div className="absolute left-0 top-full mt-1 text-red-500 text-xs">
+                  {errors.title.message?.toString()}
+                </div>
+              )}
+            </div>
           </div>
 
           <FroalaEditorComponent
@@ -167,9 +179,11 @@ const PostForm = () => {
             }}
             onModelChange={handleModelChange}
           />
-
-         <LoadingButton isLoading={isLoading} onClick={handleSubmit(addBlog)} buttonText="Create Post" />
-
+          <div className='w-full flex items-center justify-end'>
+            <div className=' bg-slate-500 hover:bg-slate-800 rounded-md shadow-md w-32 '>
+              <LoadingButton isLoading={isLoading} onClick={handleSubmit(addBlog)} buttonText="Create Post" />
+            </div>
+          </div>
         </form>
       </div>
     </div>
@@ -177,3 +191,4 @@ const PostForm = () => {
 };
 
 export default PostForm;
+

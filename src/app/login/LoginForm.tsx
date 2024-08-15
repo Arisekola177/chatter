@@ -57,7 +57,7 @@ const LoginForm = () => {
 
   return (
    
-      <div className="rounded-lg shadow-lg px-10 py-6">
+      <div className="rounded-lg bg-white shadow-lg px-10 py-6">
         <h2 className="lg:text-2xl xs:text-sm font-bold text-center py-6">Welcome Back!</h2>
           <div onClick={handleGoogleSignIn} className='rounded-md border-[1px] border-black'>
           <button  className='w-full flex items-center justify-center gap-4 py-2 '>
@@ -71,7 +71,7 @@ const LoginForm = () => {
         </div>
         <div className=' grid grid-cols-3 items-center justify-center mt-4 gap-2'>
         <hr className='bg-slate-500 w-full mt-2 h-px col-span-1' />
-        <p className='w-full items-center text-sm col-span-1'>Or sign in with</p>
+        <p className='w-full items-center text-center text-sm col-span-1'>Or sign in with</p>
         <hr className='bg-slate-500 w-full mt-2 h-px col-span-1' />
         </div>
 
@@ -91,7 +91,10 @@ const LoginForm = () => {
             errors={errors}
             required
           />
+          <div className='w-full bg-slate-700 text-center hover:bg-slate-900 rounded-md shadow-md'>
           <LoadingButton isLoading={isLoading} onClick={handleSubmit(onSubmit)} buttonText="Login" />
+          </div>
+         
         </form>
         <p className="text-center py-4 xs:text-[8px] sm:text-xs">Don't have an account? <Link className="text-blue-500 hover:underline underline-offset-4" href='/register'>Sign Up</Link> here.</p>
       </div>

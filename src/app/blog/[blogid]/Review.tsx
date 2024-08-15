@@ -3,16 +3,17 @@
 
 import React from 'react';
 import Image from "next/image";
-import { FaComment } from "react-icons/fa";
-import { IoMdHeart } from "react-icons/io";
+
 
 interface Blog {
     id: string;
     title: string;
-    description: string;
+    content: string;
     category: string;
     image: string;
-    reviews: any[];
+    reviews: [];
+    createdAt: string;
+    author: string;
 }
 
 interface ReviewProps {
@@ -41,7 +42,7 @@ const Review: React.FC<ReviewProps> = ({ blog }) => {
                     </div>
                 ))
             ) : (
-                <p>No reviews yet.</p>
+                <p className='text-white font-semibold'>No reviews yet.</p>
             )}
         </div>
     );

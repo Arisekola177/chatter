@@ -63,8 +63,7 @@ const Addreviews: React.FC<ReviewProps> = ({ blog, currentUser }) => {
     }
 
     return (
-        <div className='flex flex-col gap-2 max-w-[500px]'>
-            <h2 className='font-bold mb-4 text-xl'>Rate This Post</h2>
+        <div className='flex flex-col gap-2 xs:w-full md:w-[500px]'>
             <textarea
                 {...register('Comment', { required: true })}
                 disabled={isLoading}

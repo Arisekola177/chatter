@@ -1,7 +1,7 @@
-import prisma from '@/lib/prisma';
+import prisma from '@/lib/prisma'
 
 
-export default async function getBlogById(blogId: string){
+export default async function getBlogById(blogId){
     try {
             const blog = await prisma.blog.findUnique({
                 where: {
@@ -15,11 +15,6 @@ export default async function getBlogById(blogId: string){
                         orderBy: {
                             createdAt: 'desc'
                         }
-                    },
-                    likes: {
-                        include: {
-                            user: true
-                        }
                     }
                 }
             });
@@ -28,7 +23,7 @@ export default async function getBlogById(blogId: string){
             return blog;
 
         
-    } catch (error: any) {
-        throw new Error(error instanceof Error ? error.message : String(error));
+    } catch (error) {
+        throw new Error(error)
     }
 }

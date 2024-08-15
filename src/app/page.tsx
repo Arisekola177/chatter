@@ -1,5 +1,5 @@
 export const revalidate = 0;
-import Banner from "./components/Banner";
+
 import Post from "./components/Post";
 import getBlogs from '../../actions/getBlogs'
 import { getUser } from "../../actions/getUser";

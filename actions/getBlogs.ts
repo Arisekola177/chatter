@@ -66,18 +66,7 @@ export default async function getBlog(params: BlogParams = {}): Promise<any[]> {
         likes: true, 
       }
     });
-
-    return blogs.map(blog => ({
-      ...blog,
-      reviews: blog.reviews.map(review => ({
-        ...review,
-        user: review.user || null 
-      })),
-      likes: blog.likes.map(like => ({
-        ...like,
-        user: like.user || null 
-      }))
-    }));
+       return blogs;
   } catch (error: unknown) {
     // Handle errors and ensure they are of type 'Error'
     if (error instanceof Error) {

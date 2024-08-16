@@ -169,8 +169,9 @@ const RegisterForm = () => {
                 <div className="absolute left-0 top-full mt-1 text-red-500 text-xs">{errors.confirmPassword.message?.toString()}</div>
               )}
             </div>
-       
+            <div className='w-full bg-slate-700 text-center hover:bg-slate-900 rounded-md shadow-md'>
           <LoadingButton isLoading={isLoading} onClick={handleSubmit(onSubmit)} buttonText="Sign Up" />
+           </div>
         </form>
         <p className="text-center py-4 text-sm ">Already have an account? <Link className="text-blue-500 hover:underline underline-offset-4" href='/login'>Login</Link> here.</p>
       </div>

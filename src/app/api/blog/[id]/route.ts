@@ -1,9 +1,22 @@
-import { NextResponse } from 'next/server';
+// Define the custom error type and type guard
+interface PrismaError extends Error {
+  code?: string; // Prisma errors typically have a `code` property
+}
+
+function isPrismaError(error: any): error is PrismaError {
+  return error instanceof Error && 'code' in error;
+}
+
+// Import necessary modules
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getUser } from '../../../../../actions/getUser';
 
+interface Params {
+  id: string;
+}
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Params }) {
   try {
     const currentUser = await getUser();
 
@@ -18,11 +31,13 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     });
 
     return NextResponse.json(blog);
-  } catch (error : any) {
+  } catch (error: any) {
     console.error('Error deleting blog:', error);
-    if (error.code === 'P2025') {
+
+    if (isPrismaError(error) && error.code === 'P2025') {
       return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
     }
+
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

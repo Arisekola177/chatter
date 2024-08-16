@@ -1,6 +1,6 @@
 import { getUser } from "../../../actions/getUser";
 import EditProfile from "./EditProfile";
-
+export const dynamic = 'force-dynamic';
 const page =async () => {
     const currentUser = await getUser();
   return (

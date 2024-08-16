@@ -21,7 +21,7 @@ interface BlogProps {
   blog: Blog[];
 }
 
-const Post: React.FC<BlogProps> = ({ blog, currentUser }) => {
+const Post: React.FC<BlogProps> = ({ blog = [], currentUser }) => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(0);
   const productsPerPage = 3;

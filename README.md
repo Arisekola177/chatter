@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
 
-First, run the development server:
+*Chatter Blog Application*
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+A full-stack blog application built with Next.js, Prisma, MongoDB, Firebase, and Tailwind CSS.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+*Features*
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- User authentication and authorization
+- Create, read, update, and delete (CRUD) blog posts
+- Image and video upload and storage using Firebase
+- Responsive design with Tailwind CSS
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+*Tech Stack*
 
-## Learn More
+- Next.js (Frontend and Backend)
+- Next auth (Authentication)
+- Prisma (Schema management)
+- MongoDB (Database)
+- Firebase (Image storage)
+- Tailwind CSS (Styling)
 
-To learn more about Next.js, take a look at the following resources:
+*Getting Started*
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository: `git clone (https://github.com/Arisekola177/chatter.git)
+2. Install dependencies: `npm install` or `yarn install`
+3. Set up environment variables: `cp .env.example .env` and fill in your credentials
+4. Start the development server: `npm run dev` or `yarn dev`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+*Deployment*
 
-## Deploy on Vercel
+This application has been deployed to vercel. It can be view here https://chatter-nine-sigma.vercel.app/
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+*Contributing*
+
+Contributions are welcome! Please open an issue or submit a pull request.
+
+*License*
+
+This project is licensed under the MIT License.
+
+*Acknowledgments*
+
+- Next.js team for creating an amazing framework
+- Prisma team for simplifying database management
+- MongoDB team for providing a powerful database solution
+- Firebase team for providing a robust image storage solution
+- Tailwind CSS team for creating a fantastic styling framework
+

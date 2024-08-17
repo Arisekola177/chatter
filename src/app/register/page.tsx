@@ -3,7 +3,7 @@ import RegisterForm from './RegisterForm'
 export const dynamic = 'force-dynamic';
 const page = () => {
   return (
-    <div className="w-8/12 h-screen mx-auto flex justify-center items-center">
+    <div className="w-full flex flex-col items-center justify-center h-screen xs:p-6 md:p-0">
         <RegisterForm />
     </div>
   )

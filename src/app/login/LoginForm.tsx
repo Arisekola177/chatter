@@ -57,25 +57,23 @@ const LoginForm = () => {
 
   return (
    
-      <div className="rounded-lg bg-white shadow-lg px-10 py-6">
+      <div className="md:w-[500px] xs:w-full mx-auto rounded-lg bg-white shadow-lg px-10 py-6">
         <h2 className="lg:text-2xl xs:text-sm font-bold text-center py-6">Welcome Back!</h2>
-          <div onClick={handleGoogleSignIn} className='rounded-md border-[1px] border-black'>
+          <div onClick={handleGoogleSignIn} className='rounded-md border-[1px] xs:w-full md:w-[400px] mx-auto border-black'>
           <button  className='w-full flex items-center justify-center gap-4 py-2 '>
             <FcGoogle className='text-2xl' /> sign in with Google
           </button>
         </div>
-        <div onClick={handleGithubSignIn} className='rounded-md border-[1px] border-black mt-4'>
+        <div onClick={handleGithubSignIn} className='rounded-md border-[1px] xs:w-full md:w-[400px] mx-auto border-black mt-4'>
           <button  className='w-full flex items-center justify-center gap-4 py-2 '>
             <FaGithub className='text-2xl' /> sign in with Github
           </button>
         </div>
-        <div className=' grid grid-cols-3 items-center justify-center mt-4 gap-2'>
-        <hr className='bg-slate-500 w-full mt-2 h-px col-span-1' />
-        <p className='w-full items-center text-center text-sm col-span-1'>Or sign in with</p>
-        <hr className='bg-slate-500 w-full mt-2 h-px col-span-1' />
-        </div>
+      
+        <p className='w-full font-semibold mt-3 md:text-sm xs:text-xs text-center'>Or sign in with</p>
+       
 
-        <form className="py-4 flex flex-col gap-2 xs:w-full md:w-[500px]">
+        <form className="py-4 flex flex-col mx-auto gap-2 xs:w-full md:w-[400px] ">
           <Input id='email'
             label='Email'
             disabled={isLoading}

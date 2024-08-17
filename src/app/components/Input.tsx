@@ -47,11 +47,12 @@ const Input: React.FC<InputProps> =({
               `} />
         <label className={`absolute 
         cursor-text
-         text-md 
+         text-sm 
          duration-150
           transform
            -translate-y-3
-            top-5 z-10
+            top-5 
+            z-10
              origin-[0]
               left-4 
               peer-placeholder-shown:scale-100 

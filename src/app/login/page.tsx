@@ -3,7 +3,7 @@ import LoginForm from "./LoginForm"
 const page = async () => {
  
   return (
-    <div className="w-8/12 h-screen flex items-center justify-center mx-auto ">
+    <div className="w-full flex flex-col items-center justify-center h-screen  xs:p-6 md:p-0 ">
          <LoginForm  />
     </div>
   )

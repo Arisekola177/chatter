@@ -88,7 +88,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, currentUser }) => {
                         </figure>
                     )}
 
-                    <div className='prose prose-sm max-w-none text-justify'
+                    <div className='prose prose-sm max-w-none '
                         style={{ color: 'white' }}
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(sanitizedContent) }}>
                     </div>

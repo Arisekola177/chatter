@@ -124,11 +124,11 @@ const Post: React.FC<BlogProps> = ({ blogData: initialBlogData, currentUser }) =
 
             return (
               <div className='grid xl:grid-cols-3 md:grid-cols-2 xs:grid-cols-1 gap-2 xl:gap-6 xxl:gap-2 mb-3 border-[2px] border-slate-500 p-4 rounded-md' key={blog.id}>
-                <div className='xxl:w-[230px]  md:w-[150px] md:h-[150px] lg:w-[200px] lg:h-[200px] xs:w-full xxl:h-[200px] rounded-md col-span-1'>
+                <div className='xxl:w-[230px] md:w-[150px] md:h-[150px] lg:w-[200px] lg:h-[200px] xs:w-full xxl:h-[200px] rounded-md col-span-1'>
                   {firstImage && (
                     <Image 
                       src={firstImage} 
-                      width={300} 
+                      width={230} 
                       height={200} 
                       alt={blog.title} 
                       className='object-cover w-full h-full' 

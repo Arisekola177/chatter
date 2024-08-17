@@ -77,26 +77,24 @@ const RegisterForm = () => {
 
 
   return (
-    <div className="">
-      <div className="rounded-lg bg-white shadow-lg px-10 py-6">
-        <h2 className="lg:text-2xl xs:text-sm font-bold text-orange-800 text-center py-4">Sign Up</h2>
-        <div onClick={handleGoogleSignIn} className='rounded-md border-[1px] border-black mt-4'>
+  
+      <div className="md:w-[500px] xs:w-full mx-auto rounded-lg bg-white shadow-lg px-10 py-6">
+        <h2 className="lg:text-2xl xs:text-sm font-bold text-black text-center py-4">Sign Up</h2>
+        <div onClick={handleGoogleSignIn} className='rounded-md border-[1px] xs:w-full md:w-[400px] mx-auto border-black mt-4'>
           <button className='w-full flex items-center justify-center gap-4 py-2 '>
             <FcGoogle className='text-2xl' /> Continue with Google
           </button>
         </div>
-        <div onClick={handleGithubSignIn} className='rounded-md border-[1px] border-black mt-4'>
+        <div onClick={handleGithubSignIn} className='rounded-md border-[1px] xs:w-full md:w-[400px] mx-auto border-black mt-4'>
           <button  className='w-full flex items-center justify-center gap-4 py-2 '>
             <FaGithub className='text-2xl' /> sign in with Github
           </button>
         </div>
-        <div className=' grid grid-cols-3 items-center justify-center mt-4 gap-2'>
-        <hr className='bg-slate-500 w-full mt-2 h-px col-span-1' />
-        <p className='w-full items-center text-center text-sm col-span-1'>Or sign up with</p>
-        <hr className='bg-slate-500 w-full mt-2 h-px col-span-1' />
-        </div>
+        
+        <p className='w-full font-semibold mt-3 md:text-sm xs:text-xs text-center'>Or sign up with</p>
+      
 
-        <form className="py-4 flex flex-col gap-2 xs:w-full md:w-[500px]">
+        <form className="py-4 flex flex-col mx-auto gap-2 xs:w-full md:w-[400px]">
         <div className={`relative col-span-2  ${errors?.name ? 'mb-6' : 'mb-0'}`}>
           <Input
             id='name'
@@ -175,7 +173,7 @@ const RegisterForm = () => {
         </form>
         <p className="text-center py-4 text-sm ">Already have an account? <Link className="text-blue-500 hover:underline underline-offset-4" href='/login'>Login</Link> here.</p>
       </div>
-    </div>
+   
   )
 }
 

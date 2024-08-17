@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const NEWS_API_KEY = '535dab4ddcb54d92920c73ad30f0bdf6';
+const NEWS_API_KEY = process.env.NEXT_PUBLIC_NEWS_API_KEY;
 
 interface Article {
   source: {
@@ -23,10 +23,6 @@ interface NewsResponse {
 }
 
 const getTrendingNews = async (): Promise<Article[]> => {
-  if (!NEWS_API_KEY) {
-    console.error("NEWS_API_KEY is not defined.");
-    return [];
-  }
 
   try {
     const response = await axios.get<NewsResponse>(`https://newsapi.org/v2/top-headlines?country=us&category=general&pageSize=5&apiKey=${NEWS_API_KEY}`);

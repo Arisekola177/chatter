@@ -27,7 +27,6 @@ export default async function Home({searchParams}: HomeProps ) {
  
   return (
     <main className="overflow-hidden" >
-       {/* <Banner /> */}
        <Post blogData={blogData} currentUser={currentUser} />
         
     </main>

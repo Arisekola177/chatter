@@ -96,7 +96,7 @@ const RegisterForm = () => {
         <hr className='bg-slate-500 w-full mt-2 h-px col-span-1' />
         </div>
 
-        <form className="py-4 flex flex-col gap-2 w-[500px]">
+        <form className="py-4 flex flex-col gap-2 xs:w-full md:w-[500px]">
         <div className={`relative col-span-2  ${errors?.name ? 'mb-6' : 'mb-0'}`}>
           <Input
             id='name'

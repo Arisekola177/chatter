@@ -10,7 +10,6 @@ const BlogPage = async ({ params }: { params: { blogid: string } }) => {
     const currentUser = await getUser();
     const blog = await getBlogById(blogid);
 
-    // Check if the blog or currentUser exists
     if (!blog || !currentUser) {
         notFound();
         return null; 

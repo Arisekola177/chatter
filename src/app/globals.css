@@ -2,3 +2,11 @@
   @tailwind components;
   @tailwind utilities;
   
+  .editor-content {
+    @apply p-4; /* Adds padding inside the editor */
+}
+
+/* Style for images within the editor */
+.editor-content img {
+    @apply max-w-xs h-auto; /* Adjust max-width to control image size */
+}

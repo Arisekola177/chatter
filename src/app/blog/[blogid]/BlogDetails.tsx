@@ -13,7 +13,7 @@ interface BlogDetailsProps {
     currentUser: User;
 }
 
-// Extract the first image from the blog content
+
 const extractFirstImage = (content: string | undefined) => {
     if (!content) return { src: null, content: '', caption: '' };
 
@@ -29,7 +29,7 @@ const extractFirstImage = (content: string | undefined) => {
     return { src: null, content: div.innerHTML, caption: '' };
 };
 
-// Main component
+
 const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, currentUser }) => {
     if (!blog) {
         return <div>Blog not found</div>;

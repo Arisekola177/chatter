@@ -1,185 +1,227 @@
-import React, { useRef, useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import { FaBlogger } from 'react-icons/fa';
-import { BiCategory } from 'react-icons/bi';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { ref as firebaseRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { storage } from '@/app/firebaseConfig';
-import axios from 'axios';
-import LoadingButton from './LoadingButton';
+import ReactQuill from 'react-quill';
+import { storage } from "../firebaseConfig";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import 'react-quill/dist/quill.snow.css';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
-// Importing FroalaEditorComponent dynamically
-const FroalaEditorComponent = dynamic(() => import('react-froala-wysiwyg'), { ssr: false });
+const modules = {
+  toolbar: {
+    container: [
+      [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
+      [{size: []}],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, 
+       {'indent': '-1'}, {'indent': '+1'}],
+      ['link', 'image', 'video'],
+      ['clean']                                         
+    ],
+  }
+};
 
-// Define the Form Schema
 const FormSchema = z.object({
   category: z.string().nonempty('Category is required.'),
   title: z.string().nonempty('Title is required.'),
+  description: z.string().nonempty('Description is required.'),
 });
 
-const PostForm = () => {
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
-    resolver: zodResolver(FormSchema),
+type FormData = z.infer<typeof FormSchema>;
+
+const PostForm: React.FC = () => {
+
+
+  const {register, handleSubmit, setValue, reset, watch, formState:{errors}} = useForm<FormData>({
+    resolver: zodResolver(FormSchema)
   });
+
+  
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const editorRef = useRef<any>(null); // Use `any` for dynamic content
 
-  const [model, setModel] = useState('');
+  const category = watch('category');
+  const description = watch('description');
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedModel = localStorage.getItem('savehtml') || '';
-      setModel(savedModel);
-    }
-  }, []);
+const processAndUploadContent = async (htmlContent: string): Promise<string> => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlContent, 'text/html');
+  const images = doc.querySelectorAll('img');
+  const videos = doc.querySelectorAll('video');
 
-  const handleModelChange = (model: any) => {
-    setModel(model);
-  };
-
-  const handleImageUpload = (files: FileList) => {
-    if (files.length) {
-      const file = files[0];
-      uploadFileToFirebase(file)
-        .then((url) => {
-          editorRef.current?.editor?.image.insert(url, null, null, editorRef.current?.editor?.image.get(), null);
-        })
-        .catch((error) => {
-          console.error('Image upload failed:', error);
-        });
-    }
-    return false;
-  };
-
-  const handleVideoUpload = (files: FileList) => {
-    if (files.length) {
-      const file = files[0];
-      uploadFileToFirebase(file)
-        .then((url) => {
-          editorRef.current?.editor?.video.insert(url, null, null, editorRef.current?.editor?.video.get(), null);
-        })
-        .catch((error) => {
-          console.error('Video upload failed:', error);
-        });
-    }
-    return false;
-  };
-
-  const uploadFileToFirebase = async (file: File) => {
-    return new Promise((resolve, reject) => {
-      const fileName = new Date().getTime() + '-' + file.name;
-      const storageRef = firebaseRef(storage, `uploads/${fileName}`);
+  const imageArray = Array.from(images);
+  for (const img of imageArray) {
+    const src = img.getAttribute('src');
+    if (src) {
+      const file = await fetch(src).then((r) => r.blob());
+      const fileName = `image-${Date.now()}`;
+      const storageRef = ref(storage, `posts/${fileName}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
+      
+      const downloadURL = await new Promise<string>((resolve, reject) => {
+        uploadTask.on(
+          'state_changed',
+          () => {
+          },
+          (error) => {
+            reject(error);
+          },
+          async () => {
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            resolve(url);
+          }
+        );
+      });
+      img.setAttribute('src', downloadURL);
+    }
+  }
 
+
+
+const videoArray = Array.from(videos);
+
+for (const video of videoArray) {
+  const src = video.getAttribute('src');
+  if (src) {
+    const file = await fetch(src).then((r) => r.blob());
+    const fileName = `video-${Date.now()}`;
+    const storageRef = ref(storage, `posts/${fileName}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    
+    const downloadURL = await new Promise<string>((resolve, reject) => {
       uploadTask.on(
         'state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log('Upload is ' + progress + '% done');
+        () => {
         },
         (error) => {
           reject(error);
         },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            resolve(downloadURL);
-          });
+        async () => {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(url);
         }
       );
     });
-  };
+    video.setAttribute('src', downloadURL);
+  }
+}
 
-  const addBlog = async (data: any) => {
-    toast('Creating Post, please wait ....');
-    setIsLoading(true);
-    try {
-      const blogData = {
-        category: data.category,
-        title: data.title,
-        content: editorRef.current?.editor.html.get(),
-      };
-      await axios.post('/api/blog', blogData);
-      setIsLoading(false);
-      toast.success('Blog created successfully!');
-      reset();
-      setModel('');
-      router.push('/');
-      router.refresh();
-    } catch (error) {
-      console.error('Something went wrong while saving blog to the database', error);
-      toast.error('Something went wrong while saving blog to the database');
-      setIsLoading(false);
-    }
-  };
+
+  return doc.body.innerHTML;
+};
+
+type FormData = {
+  category: string;
+  title: string;
+  description: string;
+};
+
+const handlePost: SubmitHandler<FormData> = async (data: FormData) => {
+  toast('Creating Post, please wait......')
+  setIsLoading(true)
+  try {
+    const processedDescription = await processAndUploadContent(data.description);
+    data.description = processedDescription;
+
+    const response = await fetch('/api/blog', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    router.push('/')
+    router.refresh()
+    reset()
+  } catch (error) {
+    console.error("Error processing content: ", error);
+    toast.error("Failed to process content");
+    setIsLoading(false)
+  } finally {
+    setIsLoading(false)
+    toast.success('Post Created Sucessfully')
+  }
+};
+
 
   return (
-    <div className='flex items-center justify-center gap-4'>
-      <div className=''>
-        <form className='flex flex-col py-4 gap-4' onSubmit={handleSubmit(addBlog)}>
-          <div className='grid xs:grid-cols-1 md:grid-cols-2 gap-2'>
-            <div className={`relative w-full ${errors?.category ? 'mb-6' : 'mb-0'}`}>
-              <select {...register('category')}
-                className='rounded-md py-3 w-full px-10 outline-none border-[1px] border-black focus:outline-slate-500'>
-                <option value=''>Select a category</option>
-                <option value='Technology'>Technology</option>
-                <option value='Lifestyle'>Lifestyle</option>
-                <option value='Education'>Education</option>
-                <option value='Fashion'>Fashion</option>
-                <option value='Sport'>Sport</option>
-                <option value='Culture'>Culture</option>
-                <option value='Travel'>Travel</option>
-                <option value='Entertainment'>Entertainment</option>
-              </select>
-              <BiCategory className='absolute left-2 text-xs top-1/2 transform -translate-y-1/2 cursor-pointer' />
-              {errors.category && (
-                <div className='absolute left-0 top-full mt-1 text-red-500 text-xs'>
-                  {errors.category.message?.toString()}
-                </div>
-              )}
-            </div>
-            <div className={`relative w-full ${errors?.title ? 'mb-6' : 'mb-0'}`}>
-              <input
+    <div className='flex flex-col items-center justify-center gap-4'>
+      <div className='w-full'>
+        <form onSubmit={handleSubmit(handlePost)} className="py-4 flex flex-col gap-2 w-full">
+          <div className='grid grid-cols-2 gap-4'>
+            <div className={`relative col-span-1 ${errors?.title ? 'mb-6' : 'mb-0'}`}>
+              <Input
+                id='title'
+                disabled={false}
                 {...register('title')}
-                type='text'
-                placeholder='Blog Title'
-                className='rounded-md py-3 w-full px-10 outline-none placeholder:text-xs border-[1px] border-black focus:outline-slate-500'
+                placeholder='Title'
+                required
               />
-              <FaBlogger className='absolute left-2 text-xs top-1/2 transform -translate-y-1/2 cursor-pointer' />
               {errors.title && (
-                <div className='absolute left-0 top-full mt-1 text-red-500 text-xs'>
+                <div className="absolute left-0 top-full mt-1 text-red-500 text-xs">
                   {errors.title.message?.toString()}
                 </div>
               )}
             </div>
-          </div>
 
-          <FroalaEditorComponent
-            tag='textarea'
-            config={{
-              imageUpload: true,
-              videoUpload: true,
-              events: {
-                'image.beforeUpload': handleImageUpload,
-                'video.beforeUpload': handleVideoUpload,
-                'save.before': (html: string) => {
-                  localStorage.setItem('savehtml', html);
-                },
-              },
-            }}
-            onModelChange={handleModelChange}
-          />
-          <div className='w-full flex items-center justify-end'>
-            <div className='bg-slate-500 hover:bg-slate-800 rounded-md shadow-md w-32'>
-              <LoadingButton isLoading={isLoading} onClick={handleSubmit(addBlog)} buttonText='Create Post' />
+            <div className={`relative col-span-1 ${errors?.category ? 'mb-6' : 'mb-0'}`}>
+              <Select
+                onValueChange={(value) => setValue('category', value, { shouldValidate: true })}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="fashion">Fashion</SelectItem>
+                  <SelectItem value="entertainment">Entertainment</SelectItem>
+                  <SelectItem value="travel">Travel</SelectItem>
+                  <SelectItem value="sport">Sport</SelectItem>
+                  <SelectItem value="education">Education</SelectItem>
+                  <SelectItem value="technology">Technology</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.category && (
+                <div className="absolute left-0 top-full mt-1 text-red-500 text-xs">
+                  {errors.category.message?.toString()}
+                </div>
+              )}
             </div>
           </div>
+
+          <div className={`relative col-span-2 ${errors?.description ? 'mb-6' : 'mb-0'}`}>
+          <ReactQuill 
+  theme="snow" 
+  value={description} 
+  onChange={(content) => setValue('description', content, { shouldValidate: true })} 
+  modules={modules} 
+  className="bg-white"
+/>
+            {errors.description && (
+              <div className="absolute left-0 top-full mt-1 text-red-500 text-xs">
+                {errors.description.message?.toString()}
+              </div>
+            )}
+          </div>
+           <div className='w-full flex justify-end '>
+           <div className='w-32 py-2 px-4 text-white text-sm bg-slate-700 text-center hover:bg-slate-900 rounded-md shadow-md'>
+            <button type="submit">
+               {isLoading ? 'Creating.... ' : 'Create Post'}
+            </button>
+          </div>
+           </div>
+        
         </form>
       </div>
     </div>

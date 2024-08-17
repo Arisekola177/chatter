@@ -75,7 +75,7 @@ const LoginForm = () => {
         <hr className='bg-slate-500 w-full mt-2 h-px col-span-1' />
         </div>
 
-        <form className="py-4 flex flex-col gap-2 w-[500px]">
+        <form className="py-4 flex flex-col gap-2 xs:w-full md:w-[500px]">
           <Input id='email'
             label='Email'
             disabled={isLoading}

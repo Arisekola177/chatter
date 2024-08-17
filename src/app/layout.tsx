@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Chatter",
-  description: "Share info",
+  description: "Discover new ideas and share your own on Chatter, a dynamic platform for information exchange, discussion, and connection.",
 };
 
 

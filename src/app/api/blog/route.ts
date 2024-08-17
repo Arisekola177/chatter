@@ -6,18 +6,17 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const { title, content, category, imageUrl } = body;
+    const { title, description, category, imageUrl } = body;
 
-    
     const currentUser = await getUser();
 
-    if (!currentUser || !currentUser.id || !currentUser.name) {
+    if (!currentUser || !currentUser.id || !currentUser.name ) {
       return NextResponse.json({ error: 'User not authenticated or missing user information' }, { status: 400 });
     }
 
     const blog = await prisma.blog.create({
       data: {
-        content,
+        content: description,
         title,
         category,
         images: imageUrl,

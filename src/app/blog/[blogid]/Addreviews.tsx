@@ -21,6 +21,7 @@ const Addreviews: React.FC<ReviewProps> = ({ blog, currentUser }) => {
     });
 
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+        toast('Loading, please wait ...')
         setIsLoading(true);
         const reviewData = {
             blogId: blog.id,
@@ -29,7 +30,7 @@ const Addreviews: React.FC<ReviewProps> = ({ blog, currentUser }) => {
         };
         try {
             await axios.post('/api/reviews', reviewData);
-            toast.success('Review Submitted');
+            toast.success('Comment Submitted');
             router.refresh();
             reset();
         } catch (error: any) {
@@ -55,7 +56,7 @@ const Addreviews: React.FC<ReviewProps> = ({ blog, currentUser }) => {
             {errors.Comment && <span className="text-red-500">This field is required</span>}
             <div className='w-full py-3 flex items-center justify-center rounded-md hover:bg-slate-700 duration-300 bg-slate-900'>
                 <button className='w-full text-white' onClick={handleSubmit(onSubmit)} disabled={isLoading}>
-                    {isLoading ? 'Sending .... ' : 'Send Review'}
+                    {isLoading ? 'Sending .... ' : 'Add Comment'}
                 </button>
             </div>
         </div>

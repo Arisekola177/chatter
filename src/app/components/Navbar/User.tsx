@@ -63,7 +63,7 @@ const UserProfile: React.FC<UserProps> = ({ currentUser }) => {
                 <Link href="/">Home</Link>
               </div>
               <div className="px-4 py-3">
-                <Link href="/profile">Your Profile</Link>
+                <Link href="/edit">Your Profile</Link>
               </div>
               <div className="px-4 py-3">
                 <Link href="/recent-post">Your Previous Post</Link>

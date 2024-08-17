@@ -98,7 +98,7 @@ const EditProfile: React.FC<UserProps> = ({currentUser}) => {
     }
   };
   return (
-    <div className="w-[400px] bg-white shadow-md rounded-lg">
+    <div className="md:w-[400px] xs:w-full bg-white shadow-md rounded-lg">
         <div className='flex items-center justify-center flex-col py-6 px-2'>
         <h2 className="text-xl font-normal mb-4">Profile</h2>
         <div className="mb-4">

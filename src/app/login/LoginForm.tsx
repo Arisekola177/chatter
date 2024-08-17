@@ -57,7 +57,7 @@ const LoginForm = () => {
 
   return (
    
-      <div className="md:w-[500px] xs:w-full mx-auto rounded-lg bg-white shadow-lg px-10 py-6">
+      <div className="md:w-[500px] xs:w-full mx-auto rounded-lg bg-white shadow-lg xs:px-3 md:px-10 py-6">
         <h2 className="lg:text-2xl xs:text-sm font-bold text-center py-6">Welcome Back!</h2>
           <div onClick={handleGoogleSignIn} className='rounded-md border-[1px] xs:w-full md:w-[400px] mx-auto border-black'>
           <button  className='w-full flex items-center justify-center gap-4 py-2 '>

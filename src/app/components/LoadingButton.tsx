@@ -26,7 +26,7 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({ isLoading, onClick, butto
   }, [isLoading]);
 
   return (
-    <button className=' text-white py-2 px-4' onClick={onClick}>
+    <button className=' text-white py-3 px-4' onClick={onClick}>
       {isLoading ? `Loading${dots}` : buttonText}
     </button>
   );

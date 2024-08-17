@@ -16,8 +16,6 @@ const Profile: React.FC<UserProps> = ({ currentUser, blog }) => {
   const edit = () => {
     router.push('/edit');
   };
-
-  // Provide a fallback image if currentUser?.image is null or undefined
   const profileImageSrc = currentUser?.image || "https://randomuser.me/api/portraits/men/1.jpg";
 
   return (
@@ -62,7 +60,7 @@ const Profile: React.FC<UserProps> = ({ currentUser, blog }) => {
           </button>
         </div>
       </div>
-      <div className="xl:col-span-4 md:col-span-2 border-[1px] border-slate-500 rounded-md xs:p-2 md:p-4">
+      <div className="xl:col-span-4 md:col-span-2 xs:p-2 md:p-4">
         <h2 className="text-center mb-4 text-white font-semibold text-xl">Recent Post</h2>
         <Post blog={blog} currentUser={currentUser} />
       </div>

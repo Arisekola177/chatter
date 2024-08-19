@@ -28,7 +28,7 @@ export default async function Home({searchParams}: HomeProps ) {
  
   return (
     <main className="overflow-hidden" >
-      <div className="mt-10">
+      <div className="hidden md:block mt-10">
          <Blogcategory />
       </div>
        <Post blogData={blogData} currentUser={currentUser} />

@@ -1,21 +1,4 @@
-// import prisma from '@/lib/prisma'
 
-
-// export default async function getBlogsByUserId(userId: string){
-//     try {
-//          const blogs = await prisma.blog.findMany({
-//             include:{
-//                 user: true
-//             },
-//             where: {
-//                 userId: userId
-//             }
-//          })
-//          return blogs
-//     } catch (error: any) {
-//         throw new Error(error)
-//     }
-// }
 
 import prisma from '@/lib/prisma';
 
@@ -26,10 +9,10 @@ export default async function getBlogsByUserId(userId: string) {
                 userId: userId
             },
             include: {
-                user: true, // Include user details
+                user: true, 
                 reviews: {
                     include: {
-                        user: true, // Include user details for each review
+                        user: true, 
                     },
                     orderBy: {
                         createdAt: 'desc'
@@ -37,13 +20,12 @@ export default async function getBlogsByUserId(userId: string) {
                 },
                 likes: {
                     include: {
-                        user: true, // Include user details for each like
+                        user: true, 
                     }
                 }
             }
         });
 
-        // Optionally, you can process the data if needed, like handling null cases
         return blogs.map(blog => ({
             ...blog,
             reviews: blog.reviews.map(review => ({

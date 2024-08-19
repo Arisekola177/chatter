@@ -6,12 +6,11 @@ import queryString from 'query-string'
 
 interface CategoryProps {
   label: string;
-  Icon: React.ComponentType<{ size: number }>;
   selected: boolean;
 }
 
 
-const Category: React.FC<CategoryProps> = ({ label, Icon, selected }) =>{
+const Category: React.FC<CategoryProps> = ({ label, selected }) =>{
   const router = useRouter()
 
   const params = useSearchParams()
@@ -43,12 +42,10 @@ const Category: React.FC<CategoryProps> = ({ label, Icon, selected }) =>{
 
   },[label, params, router] )  
   return (
-    <div onClick={handleClick} className={`flex items-center justify-between text-center lg:p-2 p-1 border-b-2 hover:text-red-400 transition cursor-pointer
-      ${selected ? 'border-b-red-800 text-red-800' : 'border-transparent text-red-500'}
+    <div onClick={handleClick} className={` text-center lg:p-2 p-1 border-b-2 hover:text-red-400 transition cursor-pointer
+      ${selected ? 'border-b-red-800 text-slate-300' : 'border-transparent text-white'}
     `}>
-      
-      <Icon size={14} />
-      <div className="font-medium md:text-[10px] text-red-500 xl:text-sm">{label}</div>
+      <div className="font-medium md:text-[10px] hover:text-slate-500 text-white xl:text-sm">{label}</div>
     </div>
   )
 }

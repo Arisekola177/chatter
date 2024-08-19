@@ -4,6 +4,7 @@ import Post from "./components/Post";
 import getBlogs from '../../actions/getBlogs'
 import { getUser } from "../../actions/getUser";
 import LoginForm from "./login/LoginForm";
+import Blogcategory from "./components/Blogcategory";
 
 interface SearchParams {
   category?: string;
@@ -27,6 +28,9 @@ export default async function Home({searchParams}: HomeProps ) {
  
   return (
     <main className="overflow-hidden" >
+      <div className="mt-10">
+         <Blogcategory />
+      </div>
        <Post blogData={blogData} currentUser={currentUser} />
         
     </main>

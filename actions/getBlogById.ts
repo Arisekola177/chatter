@@ -1,3 +1,4 @@
+
 import prisma from '@/lib/prisma';
 
 export default async function getBlogById(blogId: string) {
@@ -9,25 +10,29 @@ export default async function getBlogById(blogId: string) {
             include: {
                 reviews: {
                     include: {
-                        user: true
+                        user: true,
+                        replies: {
+                            include: {
+                                user: true,
+                            },
+                            orderBy: {
+                                createdAt: 'desc',
+                            },
+                        },
                     },
                     orderBy: {
-                        createdAt: 'desc'
-                    }
-                    
+                        createdAt: 'desc',
+                    },
                 },
-                likes: true, 
-                
-            }
+                likes: true,
+            },
         });
 
         if (!blog) return null;
 
-        // Return the blog object as is, assuming it includes all necessary fields including 'image'
         return blog;
 
     } catch (error: any) {
-        // Handling the error appropriately
         throw new Error(error instanceof Error ? error.message : String(error));
     }
 }

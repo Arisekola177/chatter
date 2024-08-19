@@ -1,81 +1,3 @@
-// import prisma from '@/lib/prisma';
-
-// // Define types for the function parameters
-// interface BlogParams {
-//   category?: string;
-//   searchTerm?: string;
-// }
-
-// // Define the type for the query object based on Prisma's filter capabilities
-// interface BlogQuery {
-//   category?: string;
-//   title?: {
-//     contains?: string;
-//     mode?: 'insensitive';
-//   };
-//   content?: {
-//     contains?: string;
-//     mode?: 'insensitive';
-//   };
-// }
-
-// export default async function getBlog(params: BlogParams = {}): Promise<any[]> {
-//   try {
-//     const { category, searchTerm } = params;
-//     const searchString = searchTerm || '';
-
-//     // Define the query object with appropriate types
-//     const query: BlogQuery = {};
-
-//     if (category) {
-//       query.category = category;
-//     }
-
-//     if (searchString) {
-//       query.title = { contains: searchString, mode: 'insensitive' };
-//       query.content = { contains: searchString, mode: 'insensitive' };
-//     }
-
-//     const blogs = await prisma.blog.findMany({
-//       where: {
-//         ...query,
-//         OR: [
-//           {
-//             title: {
-//               contains: searchString,
-//               mode: 'insensitive'
-//             }
-//           },
-//           {
-//             content: {
-//               contains: searchString,
-//               mode: 'insensitive'
-//             }
-//           }
-//         ]
-//       },
-//       include: {
-//         reviews: {
-//           include: {
-//             user: true, 
-//           },
-//           orderBy: {
-//             createdAt: 'desc'
-//           }
-//         },
-//         likes: true, 
-//       }
-//     });
-//        return blogs;
-//   } catch (error: unknown) {
-//     // Handle errors and ensure they are of type 'Error'
-//     if (error instanceof Error) {
-//       throw new Error(error.message);
-//     } else {
-//       throw new Error('An unknown error occurred');
-//     }
-//   }
-// }
 
 import prisma from '@/lib/prisma';
 
@@ -116,12 +38,22 @@ export default async function getBlog(params: BlogParams = {}): Promise<any[]> {
       ];
     }
 
+    console.log('Constructed query:', JSON.stringify(query, null, 2)); // Log the query in a readable format
+
     const blogs = await prisma.blog.findMany({
       where: query,
       include: {
         reviews: {
           include: {
             user: true,
+            replies: {
+              include: {
+                user: true,
+              },
+              orderBy: {
+                createdAt: 'desc',
+              },
+            },
           },
           orderBy: {
             createdAt: 'desc',
@@ -134,11 +66,12 @@ export default async function getBlog(params: BlogParams = {}): Promise<any[]> {
     return blogs;
   } catch (error: unknown) {
     if (error instanceof Error) {
+      console.error('Error occurred:', error.message); // Log the error message
       throw new Error(error.message);
     } else {
+      console.error('An unknown error occurred');
       throw new Error('An unknown error occurred');
     }
   }
 }
-
 

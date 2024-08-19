@@ -141,7 +141,7 @@ const Post: React.FC<BlogProps> = ({ blog = [], currentUser }) => {
           </div>
         );
       })}
-      <div className="flex items-center justify-center gap-4 py-16 mt-10">
+      <div className="flex items-center justify-center gap-4 py-16 mt-20">
         <ReactPaginate
           previousLabel={'← Previous'}
           nextLabel={'Next →'}

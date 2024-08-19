@@ -7,7 +7,7 @@ const getTrendingNews = async () => {
     const response = await axios.get(`https://newsapi.org/v2/top-headlines?country=us&category=general&pageSize=5&apiKey=${NEWS_API_KEY}`);
     return response.data.articles;
   } catch (error) {
-    // Type guard to check if the error is an AxiosError
+
     if (axios.isAxiosError(error)) {
       const errorMessage = error.response ? error.response.data : error.message;
       console.error("Error fetching trending news:", errorMessage);

@@ -6,7 +6,6 @@ import Category from './Category'
 const Blogcategory = () => {
   const params = useSearchParams()
   
-  // Add a null check for params
   const category = params ? params.get('category') : null
 
   const pathname = usePathname()
@@ -23,7 +22,6 @@ const Blogcategory = () => {
             <Category 
               key={item.label}
               label={item.label}
-              Icon={item.icon}
               selected={category === item.label || (category === null && item.label === 'All')}
             />
           ))}

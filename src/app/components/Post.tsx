@@ -17,14 +17,15 @@ import {User, Blog} from '@/lib/type'
 
 interface BlogProps {
   blogData: Blog[];
-  currentUser: User ;
+  currentUser: User | null ;
 }
 
-const Post: React.FC<BlogProps> = ({ blogData: initialBlogData, currentUser }) => {
+const Post: React.FC<BlogProps> = ({ blogData, currentUser }) => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(0);
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
-  const [blogData, setBlogData] = useState(initialBlogData); 
+ 
+  
 
   const productsPerPage = 5;
   const offset = currentPage * productsPerPage;
@@ -47,7 +48,7 @@ const Post: React.FC<BlogProps> = ({ blogData: initialBlogData, currentUser }) =
 
   useEffect(() => {
     const userLikedPosts = blogData
-      .filter(blog => blog.likes && Array.isArray(blog.likes) && blog.likes.some(like => like && like.userId === currentUser.id))
+      .filter(blog => blog.likes && Array.isArray(blog.likes) && blog.likes.some(like => like && like.userId === currentUser?.id))
       .map(blog => blog.id);
     
     setLikedPosts(userLikedPosts);
@@ -85,18 +86,18 @@ const Post: React.FC<BlogProps> = ({ blogData: initialBlogData, currentUser }) =
             ? {
                 ...blog,
                 likes: alreadyLiked
-                  ? blog.likes?.filter((like) => like.userId !== currentUser.id)
+                  ? blog.likes?.filter((like) => like.userId !== currentUser?.id)
                   : [...(blog.likes || []), response.data.like].filter(Boolean), 
               }
             : blog
         );
   
-        setBlogData(updatedBlogData);
-        setLikedPosts(
-          alreadyLiked
-            ? likedPosts.filter((id) => id !== blogId)
-            : [...likedPosts, blogId]
-        );
+        // setBlogData(updatedBlogData);
+        // setLikedPosts(
+        //   alreadyLiked
+        //     ? likedPosts.filter((id) => id !== blogId)
+        //     : [...likedPosts, blogId]
+        // );
         toast.success(
           alreadyLiked ? "Post unliked successfully!" : "Post liked successfully!"
         );
@@ -144,10 +145,12 @@ const Post: React.FC<BlogProps> = ({ blogData: initialBlogData, currentUser }) =
                   </p>
                   <div className='flex items-center gap-6'>
                     {/* Comment count */}
-                    <div className='font-semibold text-xs flex items-center gap-1 cursor-pointer text-white'>
+                    <div
+                      onClick={() => router.push(`/blog/${blog.id}`)}
+                    className='font-semibold text-xs flex items-center gap-1 cursor-pointer text-white'>
                       <FaRegComment /><span>{blog.reviews ? blog.reviews.length : 0}</span>
                     </div>
-
+                     
                     {/* Like count */}
                     <div className='font-semibold text-xs flex items-center gap-1 cursor-pointer text-white'>
                   <SlLike
@@ -165,7 +168,7 @@ const Post: React.FC<BlogProps> = ({ blogData: initialBlogData, currentUser }) =
             );
           })}
         </div>
-        <div className="flex items-center justify-center gap-4 my-10">
+        <div className="flex items-center justify-center gap-4 mt-20">
           <ReactPaginate
             previousLabel={'← Previous'}
             nextLabel={'Next →'}

@@ -100,7 +100,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, currentUser }) => {
 
                     <div className="flex xs:w-full md:w-[500px] flex-col gap-2">
                         <h2 className="py-2 font-semibold text-lg text-white">Reviews</h2>
-                        <ReviewComponent blog={blog} />
+                        <ReviewComponent blog={blog} currentUser={currentUser} />
                     </div>
                 </div>
 

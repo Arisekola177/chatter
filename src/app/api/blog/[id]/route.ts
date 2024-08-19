@@ -1,13 +1,12 @@
-// Define the custom error type and type guard
+
 interface PrismaError extends Error {
-  code?: string; // Prisma errors typically have a `code` property
+  code?: string; 
 }
 
 function isPrismaError(error: any): error is PrismaError {
   return error instanceof Error && 'code' in error;
 }
 
-// Import necessary modules
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getUser } from '../../../../../actions/getUser';

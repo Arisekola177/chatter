@@ -59,17 +59,21 @@ model Blog{
    likes    Like[]  
 }
 
-model Review{
-   id            String  @id @default(auto()) @map("_id") @db.ObjectId
-   name          String?
-   userId        String?  @db.ObjectId
-   blogId      String  @db.ObjectId
-   comment     String
-   createdAt    DateTime @default(now())
-   blog    Blog @relation(fields: [blogId], references: [id])
-   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
+model Review {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  name            String?
+  userId          String?   @db.ObjectId
+  blogId          String    @db.ObjectId
+  comment         String
+  createdAt       DateTime  @default(now())
+  blog            Blog      @relation(fields: [blogId], references: [id])
+  user            User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentReviewId  String?   @db.ObjectId
+  parentReview    Review?   @relation("CommentReplies", fields: [parentReviewId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies         Review[]  @relation("CommentReplies")
  
+}
+
 
  model Like {
   id        String @id @default(auto()) @map("_id") @db.ObjectId  
@@ -85,4 +89,4 @@ model Review{
 
 
 
- 
+

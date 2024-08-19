@@ -184,12 +184,12 @@ const handlePost: SubmitHandler<FormData> = async (data: FormData) => {
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="fashion">Fashion</SelectItem>
-                  <SelectItem value="entertainment">Entertainment</SelectItem>
-                  <SelectItem value="travel">Travel</SelectItem>
-                  <SelectItem value="sport">Sport</SelectItem>
-                  <SelectItem value="education">Education</SelectItem>
-                  <SelectItem value="technology">Technology</SelectItem>
+                  <SelectItem value="Fashion">Fashion</SelectItem>
+                  <SelectItem value="Entertainment">Entertainment</SelectItem>
+                  <SelectItem value="Travel">Travel</SelectItem>
+                  <SelectItem value="Sport">Sport</SelectItem>
+                  <SelectItem value="Education">Education</SelectItem>
+                  <SelectItem value="Technology">Technology</SelectItem>
                 </SelectContent>
               </Select>
               {errors.category && (

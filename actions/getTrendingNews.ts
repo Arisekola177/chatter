@@ -1,13 +1,10 @@
 import axios from 'axios';
 
-const NEWS_API_KEY = process.env.NEXT_PUBLIC_NEWS_API_KEY;
-
 const getTrendingNews = async () => {
   try {
-    const response = await axios.get(`https://newsapi.org/v2/top-headlines?country=us&category=general&pageSize=5&apiKey=${NEWS_API_KEY}`);
-    return response.data.articles;
+    const response = await axios.get(`https://newsdata.io/api/1/latest?apikey=pub_512157bc90140475206acded6606042d9e4a6&q=pizza`);
+    return response.data.results;
   } catch (error) {
-
     if (axios.isAxiosError(error)) {
       const errorMessage = error.response ? error.response.data : error.message;
       console.error("Error fetching trending news:", errorMessage);
@@ -17,5 +14,4 @@ const getTrendingNews = async () => {
     return [];
   }
 }
-
-export default getTrendingNews;
+export default getTrendingNews

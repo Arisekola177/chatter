@@ -25,11 +25,26 @@ export async function DELETE(req: NextRequest, { params }: { params: Params }) {
 
     const blogId = params.id;
 
-    const blog = await prisma.blog.delete({
+    // Fetch the blog to check if the current user is the author
+    const blog = await prisma.blog.findUnique({
+      where: { id: blogId },
+      select: { userId: true },
+    });
+
+    if (!blog) {
+      return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
+    }
+
+    if (blog.userId !== currentUser.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Delete the blog and its associated reviews and likes
+    await prisma.blog.delete({
       where: { id: blogId },
     });
 
-    return NextResponse.json(blog);
+    return NextResponse.json({ message: 'Blog deleted successfully' });
   } catch (error: any) {
     console.error('Error deleting blog:', error);
 
